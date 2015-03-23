@@ -7,7 +7,7 @@
 end       return END;
 [a-zA-Z]  return WORD;
 [A-Z]     return UPPERWORD;
-[a-Z]     return LOWERWORD;
+[a-z]     return LOWERWORD;
 [0-9]     return INTEGER;
 [0-9.]    return DECIMAL;
 ";"       return SEMICOLON;
