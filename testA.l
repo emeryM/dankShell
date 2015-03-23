@@ -1,16 +1,14 @@
 %{
 #include <stdio.h>
-#include <y.tab.h>
 %}
 
-%% 
-end       return END;
-[a-zA-Z]  return WORD;
-[A-Z]     return UPPERWORD;
-[a-z]     return LOWERWORD;
-[0-9]     return INTEGER;
-[0-9.]    return DECIMAL;
-";"       return SEMICOLON;
-"("       return OPEN_PAREN;
-")"       return CLOSE_PAREN;
+%%
+[a-z]    printf("Lowercase word\n");
+[A-Z]    printf("Uppercase word\n");
+[a-ZA-Z] printf("Word\n");
+[0-9]    printf("Integer\n");
+[0-9.]   printf("Float\n");
+";"      printf("Semicolon\n");
+"("      printf("Open parentheses\n");
+")"      printf("Close parentheses\n");
 %%
