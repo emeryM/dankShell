@@ -13,7 +13,7 @@
 
         for (EVER)
            {
-           fprintf(stderr, "dankShell: ");
+           fprintf(stderr, "cmd: ");
               if ( gets (line) == (char *) NULL)      /* blank line input */
                  exit (0);
 
