@@ -18,3 +18,7 @@ extern int yylval;
 "+"		  return PLUS;
 %%
 
+int yywrap(void){
+		return 1;
+}
+
