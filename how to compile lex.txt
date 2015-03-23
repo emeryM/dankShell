@@ -1,2 +1,17 @@
- $ flex exampleA.l
- $ gcc -o exampleA lex.yy.c -lfl
+
+
+Run yacc on your parser definition.
+ 	$ yacc -d calcparser.y
+
+Run lex on your lexical definition.
+	 $ flex exampleA.l
+
+Compile the generated yacc source.
+
+
+Compile the generated lex source.
+	 $ gcc -o exampleA lex.yy.c -lfl
+
+Compile any other modules.
+
+Link lex, yacc, and your other sources into an executable.

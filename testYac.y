@@ -1,16 +1,24 @@
 %{
 #include <stdio.h>
 #include <y.tab.h>
+#define YYSTYPE int;
+
 %}
 
+%token INTEGER PLUS WORD 
+
 %% 
-end       return END;
-[a-zA-Z]  return WORD;
-[A-Z]     return UPPERWORD;
-[a-z]     return LOWERWORD;
-[0-9]     return INTEGER;
-[0-9.]    return DECIMAL;
-";"       return SEMICOLON;
-"("       return OPEN_PAREN;
-")"       return CLOSE_PAREN;
+list: /*nothing*/
+		|list getorset
+		;
+addthings: INTEGER PLUS INTEGER { printf("%f\n",($1+$3)); }
 %%
+
+int main(void){
+	yyparse();
+	return 0;
+}
+
+int yyerror(char *s){
+	fprintf(stderr, "*%s*\n", s)
+}
