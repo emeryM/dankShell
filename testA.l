@@ -7,9 +7,9 @@ extern YYSTYPE yylval;
 %}
 
 %% 
-[a-zA-Z]  return WORD;
-[A-Z]     return UWORD;
 [a-z]     return LWORD;
+[A-Z]     return UWORD;
+[a-zA-Z]  return WORD;
 [0-9]     yylval=atoi(yytext); return INTEGER;
 [0-9.]    yylval=atoi(yytext); return DECIMAL;
 ";"       return SEMICOLON;
@@ -17,7 +17,8 @@ extern YYSTYPE yylval;
 ")"       return CLOSE_PAREN;
 "+"		  return PLUS;
 %%
-
+/*
 int yywrap(void){
 		return 1;
 }
+*/
