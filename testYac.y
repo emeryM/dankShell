@@ -1,11 +1,10 @@
 %{
 #include <stdio.h>
-#include <y.tab.h>
 #define YYSTYPE int;
 
 %}
 
-%token INTEGER PLUS WORD 
+%token INTEGER PLUS WORD UWORD LWORD DECIMAL SEMICOLON OPEN_PAREN CLOSE_PAREN
 
 %% 
 list: /*nothing*/
