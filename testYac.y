@@ -9,7 +9,7 @@
 
 %% 
 list: /*nothing*/
-		|list getorset
+		|list addthings
 		;
 addthings: INTEGER PLUS INTEGER { printf("%f\n",($1+$3)); }
 %%
