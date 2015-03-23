@@ -1,16 +1,14 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#define YYSTYPE int;
+//#define YYSTYPE int;
 
 %}
 
-%token INTEGER PLUS WORD UWORD LWORD DECIMAL SEMICOLON OPEN_PAREN CLOSE_PAREN
+%token INTEGER PLUS //WORD UWORD LWORD DECIMAL SEMICOLON OPEN_PAREN CLOSE_PAREN
 
 %% 
-list: /*nothing*/
-		|list addthings
-		;
+
 addthings: INTEGER PLUS INTEGER { printf("%f\n",($1+$3)); }
 %%
 
