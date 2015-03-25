@@ -11,7 +11,7 @@
 %token PIPE QUOTE OPEN_CARAT CLOSE_CARAT BACKSLASH AMPERSAND PLUS SEMICOLON OPEN_PAREN CLOSE_PAREN TWO_PERIODS
 
 %% 
-program:
+program: 						{fprintf(stderr, "dankShell: ");}
 		addthings '\n'
 		| listFiles
 		| changeDir
@@ -24,14 +24,20 @@ addthings: INTEGER PLUS INTEGER { printf("the result is %d\n",($1+$3)); }
 		;
 
 listFiles: LS
-			{execl( "/bin/ls", "ls", "-l", (char*)0 );}
+			{  
+				listOfFiles();
+             }
 			program
 			;
-changeDir: CD WORD { printf(" change directory \n");}
+changeDir: CD WORD { printf(" change directory to %s \n", $2);
+					chdir($2);}
 			program
-			|CD TWO_PERIODS{printf(" change directory up 1 \n" );}
+			|CD TWO_PERIODS{printf(" change directory up 1 \n" );
+				chdir("..");}
 			program
 			;
+
+			
 %%
 
 int main(void){
@@ -42,3 +48,23 @@ int main(void){
 int yyerror(char *s){
 	fprintf(stderr, "*%s*\n", s);
 }
+
+
+void listOfFiles(){
+				int process = fork ();
+
+	           if (process > 0){             
+	              wait ((int *) 0);      
+	           }else if (process == 0){ 
+
+	              execl( "/bin/ls", "ls", "-l", (char*)0 );
+	                                   
+	              fprintf (stderr, "Can't execute \n");
+	              exit (1);
+	              
+	           }else if(process == -1){
+
+	              fprintf (stderr, "Can't fork!\n");
+	              exit (2);
+	              }
+	}

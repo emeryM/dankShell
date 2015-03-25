@@ -1,7 +1,7 @@
 %{
 #include <stdio.h>
 #include "y.tab.h"
-extern int yylval;
+
 
 
 %}
@@ -23,9 +23,9 @@ cd         return CD;
 "\\"       return BACKSLASH;
 "&"        return AMPERSAND;
 
-[a-zA-Z]+  return WORD;
-[0-9]+     yylval=atoi(yytext); return INTEGER;
-[0-9.]+    yylval=atoi(yytext); return DECIMAL;
+[a-zA-Z]+  yylval=strdup(yytext); return WORD;
+[0-9]+     yylval=strdup(yytext); return INTEGER;
+[0-9.]+    yylval=strdup(yytext); return DECIMAL;
 
 
 %%

@@ -372,18 +372,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  13
+#define YYFINAL  11
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   14
+#define YYLAST   15
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  21
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  9
+#define YYNNTS  10
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  13
+#define YYNRULES  14
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  23
+#define YYNSTATES  24
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -430,24 +430,24 @@ static const yytype_uint8 yytranslate[] =
    YYRHS.  */
 static const yytype_uint8 yyprhs[] =
 {
-       0,     0,     3,     6,     8,    10,    12,    13,    19,    20,
-      24,    25,    30,    31
+       0,     0,     3,     4,     8,    10,    12,    14,    15,    21,
+      22,    26,    27,    32,    33
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      22,     0,    -1,    23,    20,    -1,    25,    -1,    27,    -1,
-       8,    -1,    -1,     3,    15,     3,    24,    22,    -1,    -1,
-       6,    26,    22,    -1,    -1,     7,     5,    28,    22,    -1,
-      -1,     7,    19,    29,    22,    -1
+      22,     0,    -1,    -1,    23,    24,    20,    -1,    26,    -1,
+      28,    -1,     8,    -1,    -1,     3,    15,     3,    25,    22,
+      -1,    -1,     6,    27,    22,    -1,    -1,     7,     5,    29,
+      22,    -1,    -1,     7,    19,    30,    22,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    15,    15,    16,    17,    18,    22,    22,    27,    26,
-      30,    30,    32,    32
+       0,    14,    14,    14,    16,    17,    18,    22,    22,    27,
+      26,    32,    32,    35,    35
 };
 #endif
 
@@ -459,8 +459,8 @@ static const char *const yytname[] =
   "$end", "error", "$undefined", "INTEGER", "DECIMAL", "WORD", "LS", "CD",
   "EXIT", "PIPE", "QUOTE", "OPEN_CARAT", "CLOSE_CARAT", "BACKSLASH",
   "AMPERSAND", "PLUS", "SEMICOLON", "OPEN_PAREN", "CLOSE_PAREN",
-  "TWO_PERIODS", "'\\n'", "$accept", "program", "addthings", "$@1",
-  "listFiles", "$@2", "changeDir", "$@3", "$@4", 0
+  "TWO_PERIODS", "'\\n'", "$accept", "program", "$@1", "addthings", "$@2",
+  "listFiles", "$@3", "changeDir", "$@4", "$@5", 0
 };
 #endif
 
@@ -478,15 +478,15 @@ static const yytype_uint16 yytoknum[] =
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    21,    22,    22,    22,    22,    24,    23,    26,    25,
-      28,    27,    29,    27
+       0,    21,    23,    22,    22,    22,    22,    25,    24,    27,
+      26,    29,    28,    30,    28
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     2,     1,     1,     1,     0,     5,     0,     3,
-       0,     4,     0,     4
+       0,     2,     0,     3,     1,     1,     1,     0,     5,     0,
+       3,     0,     4,     0,     4
 };
 
 /* YYDEFACT[STATE-NAME] -- Default reduction number in state STATE-NUM.
@@ -494,31 +494,31 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     0,     8,     0,     5,     0,     0,     3,     4,     0,
-       0,    10,    12,     1,     2,     6,     9,     0,     0,     0,
-      11,    13,     7
+       2,     9,     0,     6,     0,     0,     4,     5,     2,    11,
+      13,     1,     0,     0,    10,     2,     2,     0,     3,    12,
+      14,     7,     2,     8
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     5,     6,    19,     7,    10,     8,    17,    18
+      -1,     4,     5,    13,    22,     6,     8,     7,    15,    16
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -13
+#define YYPACT_NINF -11
 static const yytype_int8 yypact[] =
 {
-      -1,   -12,   -13,    -5,   -13,     4,    -8,   -13,   -13,     8,
-      -1,   -13,   -13,   -13,   -13,   -13,   -13,    -1,    -1,    -1,
-     -13,   -13,   -13
+      -3,   -11,    -4,   -11,     2,     3,   -11,   -11,    -3,   -11,
+     -11,   -11,    -6,   -10,   -11,    -3,    -3,     8,   -11,   -11,
+     -11,   -11,    -3,   -11
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -13,    -9,   -13,   -13,   -13,   -13,   -13,   -13,   -13
+     -11,    -8,   -11,   -11,   -11,   -11,   -11,   -11,   -11,   -11
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -527,29 +527,29 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      11,    16,     1,     9,    13,     2,     3,     4,    20,    21,
-      22,    15,    14,     0,    12
+      14,     9,    11,     1,     2,     3,    12,    19,    20,    17,
+      18,    21,     0,     0,    23,    10
 };
 
 #define yypact_value_is_default(yystate) \
-  ((yystate) == (-13))
+  ((yystate) == (-11))
 
 #define yytable_value_is_error(yytable_value) \
   YYID (0)
 
 static const yytype_int8 yycheck[] =
 {
-       5,    10,     3,    15,     0,     6,     7,     8,    17,    18,
-      19,     3,    20,    -1,    19
+       8,     5,     0,     6,     7,     8,     3,    15,    16,    15,
+      20,     3,    -1,    -1,    22,    19
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     6,     7,     8,    22,    23,    25,    27,    15,
-      26,     5,    19,     0,    20,     3,    22,    28,    29,    24,
-      22,    22,    22
+       0,     6,     7,     8,    22,    23,    26,    28,    27,     5,
+      19,     0,     3,    24,    22,    29,    30,    15,    20,    22,
+      22,     3,    25,    22
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1383,7 +1383,14 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 5:
+        case 2:
+
+/* Line 1806 of yacc.c  */
+#line 14 "testYac.y"
+    {fprintf(stderr, "dankShell: ");}
+    break;
+
+  case 6:
 
 /* Line 1806 of yacc.c  */
 #line 18 "testYac.y"
@@ -1391,38 +1398,42 @@ yyreduce:
 				exit(EXIT_SUCCESS);}
     break;
 
-  case 6:
+  case 7:
 
 /* Line 1806 of yacc.c  */
 #line 22 "testYac.y"
     { printf("the result is %d\n",((yyvsp[(1) - (3)])+(yyvsp[(3) - (3)]))); }
     break;
 
-  case 8:
+  case 9:
 
 /* Line 1806 of yacc.c  */
 #line 27 "testYac.y"
-    {execl( "/bin/ls", "ls", "-l", (char*)0 );}
+    {  
+				listOfFiles();
+             }
     break;
 
-  case 10:
-
-/* Line 1806 of yacc.c  */
-#line 30 "testYac.y"
-    { printf(" change directory \n");}
-    break;
-
-  case 12:
+  case 11:
 
 /* Line 1806 of yacc.c  */
 #line 32 "testYac.y"
-    {printf(" change directory up 1 \n" );}
+    { printf(" change directory to %s \n", (yyvsp[(2) - (2)]));
+					chdir((yyvsp[(2) - (2)]));}
+    break;
+
+  case 13:
+
+/* Line 1806 of yacc.c  */
+#line 35 "testYac.y"
+    {printf(" change directory up 1 \n" );
+				chdir("..");}
     break;
 
 
 
 /* Line 1806 of yacc.c  */
-#line 1426 "y.tab.c"
+#line 1437 "y.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1653,7 +1664,7 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 35 "testYac.y"
+#line 41 "testYac.y"
 
 
 int main(void){
@@ -1664,3 +1675,23 @@ int main(void){
 int yyerror(char *s){
 	fprintf(stderr, "*%s*\n", s);
 }
+
+
+void listOfFiles(){
+				int process = fork ();
+
+	           if (process > 0){             
+	              wait ((int *) 0);      
+	           }else if (process == 0){ 
+
+	              execl( "/bin/ls", "ls", "-l", (char*)0 );
+	                                   
+	              fprintf (stderr, "Can't execute \n");
+	              exit (1);
+	              
+	           }else if(process == -1){
+
+	              fprintf (stderr, "Can't fork!\n");
+	              exit (2);
+	              }
+	}

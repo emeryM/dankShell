@@ -479,7 +479,7 @@ char *yytext;
 #line 2 "testA.l"
 #include <stdio.h>
 #include "y.tab.h"
-extern int yylval;
+
 
 
 #line 486 "lex.yy.c"
@@ -827,17 +827,17 @@ return AMPERSAND;
 case 15:
 YY_RULE_SETUP
 #line 26 "testA.l"
-return WORD;
+yylval=strdup(yytext); return WORD;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 27 "testA.l"
-yylval=atoi(yytext); return INTEGER;
+yylval=strdup(yytext); return INTEGER;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 28 "testA.l"
-yylval=atoi(yytext); return DECIMAL;
+yylval=strdup(yytext); return DECIMAL;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
