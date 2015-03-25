@@ -7,9 +7,13 @@
 %}
 
 %% 
+[ \t]+     { ; }
+
 exit       return EXIT;
 ls         return LS;
 cd         return CD;
+
+"-"[a-zA-Z]+ yylval=strdup(yytext); return FLAG;
 
 ".."       return TWO_PERIODS;
 ";"        return SEMICOLON;
@@ -22,6 +26,7 @@ cd         return CD;
 ">"        return CLOSE_CARAT;
 "\\"       return BACKSLASH;
 "&"        return AMPERSAND;
+"\n"       return EOLN;
 
 [a-zA-Z]+  yylval=strdup(yytext); return WORD;
 [0-9]+     yylval=strdup(yytext); return INTEGER;

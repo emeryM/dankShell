@@ -7,7 +7,7 @@
 %}
 
 %token INTEGER DECIMAL 
-%token WORD
+%token WORD FLAG EOLN
 %token LS CD EXIT
 %token PIPE QUOTE OPEN_CARAT CLOSE_CARAT BACKSLASH AMPERSAND PLUS SEMICOLON OPEN_PAREN CLOSE_PAREN TWO_PERIODS
 
@@ -18,6 +18,7 @@ program: 						{fprintf(stderr, "dankShell: ");}
 		| changeDir
 		| EXIT {printf("Smoke weed erry day...\n"); 
 				exit(EXIT_SUCCESS);}
+		
 		;
 
 addthings: INTEGER PLUS INTEGER { printf("the result is %d\n",($1+$3)); }
@@ -25,10 +26,16 @@ addthings: INTEGER PLUS INTEGER { printf("the result is %d\n",($1+$3)); }
 		;
 
 listFiles: LS
-			{  
-				forkAndExec("ls");
+			|LS EOLN{  
+				printf("no flag\n");
+				forkAndExec("ls", "-a");
              }
 			program
+			|LS FLAG {
+	printf(" found flag %s\n",$2 );
+				forkAndExec("ls", $2);
+					}
+					program
 			;
 changeDir: CD WORD { printf(" change directory to %s \n", $2);
 					chdir($2);}
@@ -51,7 +58,9 @@ int yyerror(char *s){
 }
 
 
-void forkAndExec(char * input){
+void forkAndExec(char * input, char * flag){
+
+				printf("in forkanexec\n");
 			   int process = fork ();
 			   char * bin = "/bin/";
 
@@ -63,7 +72,7 @@ void forkAndExec(char * input){
 	           }else if (process == 0){ 
 	           	
 	           	
-	              execl( buf, input, "-l", (char*)0 );
+	              execl( buf, input, flag, (char*)0 );
 	                                   
 	              fprintf (stderr, "Can't execute \n");
 	              exit (1);
