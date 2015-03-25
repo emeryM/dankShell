@@ -8,47 +8,50 @@
 
 %token INTEGER DECIMAL 
 %token WORD FLAG EOLN
-%token LS CD EXIT
+%token LS CD EXIT PATH SETENV
 %token PIPE QUOTE OPEN_CARAT CLOSE_CARAT BACKSLASH AMPERSAND PLUS SEMICOLON OPEN_PAREN CLOSE_PAREN TWO_PERIODS
 
+
 %% 
-program: 						{fprintf(stderr, "dankShell: ");}
-		addthings '\n'
-		| listFiles
-		| changeDir
-		| EXIT {printf("Smoke weed erry day...\n"); 
+program: 	
+		
+		EXIT {printf("Smoke weed erry day...\n"); 
 				exit(EXIT_SUCCESS);}
+		| listFiles {fprintf(stderr, "dankShell: ");} program
+		| changeDir {fprintf(stderr, "dankShell: ");} program
 		
 		;
 
-addthings: INTEGER PLUS INTEGER { printf("the result is %d\n",($1+$3)); }
-			program
-		;
-
-listFiles: LS
-			|LS EOLN{  
+listFiles: 	
+			LS EOLN{  
 				printf("no flag\n");
 				forkAndExec("ls", "-a");
-             }
-			program
-			|LS FLAG {
-	printf(" found flag %s\n",$2 );
+            }
+			
+			|LS FLAG EOLN{
+				printf(" found flag %s\n",$2 );
 				forkAndExec("ls", $2);
-					}
-					program
+			}
+			
 			;
-changeDir: CD WORD { printf(" change directory to %s \n", $2);
+changeDir: 
+			CD WORD EOLN{ printf(" change directory to %s \n", $2);
 					chdir($2);}
-			program
-			|CD TWO_PERIODS{printf(" change directory up 1 \n" );
+			
+			|CD TWO_PERIODS EOLN{printf(" change directory up 1 \n" );
 				chdir("..");}
-			program
+			
+			| CD EOLN {printf("change directory to home\n");
+				chdir(getenv("HOME"));
+			}
+			
 			;
 
 			
 %%
 
 int main(void){
+	fprintf(stderr, "dankShell: ");
 	yyparse();
 	return 0;
 }

@@ -12,8 +12,10 @@
 exit       return EXIT;
 ls         return LS;
 cd         return CD;
+setenv     return SETENV;
 
-"-"[a-zA-Z]+ yylval=strdup(yytext); return FLAG;
+
+"-"[a-zA-Z]+ 	yylval=strdup(yytext); return FLAG;
 
 ".."       return TWO_PERIODS;
 ";"        return SEMICOLON;
@@ -28,9 +30,10 @@ cd         return CD;
 "&"        return AMPERSAND;
 "\n"       return EOLN;
 
-[a-zA-Z]+  yylval=strdup(yytext); return WORD;
-[0-9]+     yylval=strdup(yytext); return INTEGER;
-[0-9.]+    yylval=strdup(yytext); return DECIMAL;
+[a-zA-Z]+  		yylval=strdup(yytext); return WORD;
+
+[0-9]+     		yylval=strdup(yytext); return INTEGER;
+[0-9.]+    		yylval=strdup(yytext); return DECIMAL;
 
 
 %%
