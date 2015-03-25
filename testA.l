@@ -7,15 +7,27 @@ extern int yylval;
 %}
 
 %% 
-[a-z]     return LWORD;
-[A-Z]     return UWORD;
-[a-zA-Z]  return WORD;
-[0-9]     yylval=atoi(yytext); return INTEGER;
-[0-9.]    yylval=atoi(yytext); return DECIMAL;
-";"       return SEMICOLON;
-"("       return OPEN_PAREN;
-")"       return CLOSE_PAREN;
-"+"		  return PLUS;
+exit       return EXIT;
+ls         return LS;
+cd         return CD;
+
+".."       return TWO_PERIODS;
+";"        return SEMICOLON;
+"("        return OPEN_PAREN;
+")"        return CLOSE_PAREN;
+"+"		   return PLUS;
+"|"        return PIPE;
+"\""       return QUOTE;
+"<"        return OPEN_CARAT;
+">"        return CLOSE_CARAT;
+"\\"       return BACKSLASH;
+"&"        return AMPERSAND;
+
+[a-zA-Z]+  return WORD;
+[0-9]+     yylval=atoi(yytext); return INTEGER;
+[0-9.]+    yylval=atoi(yytext); return DECIMAL;
+
+
 %%
 
 int yywrap(void){
