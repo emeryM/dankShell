@@ -29,8 +29,13 @@ setenv     return SETENV;
 "\\"       return BACKSLASH;
 "&"        return AMPERSAND;
 "\n"       return EOLN;
+"~/"       return HOME_PATH;
+"~"		   return HOME;
+"/"		   return ROOT;
+
 
 [a-zA-Z]+  		yylval=strdup(yytext); return WORD;
+[a-zA-Z/.]+		yylval=strdup(yytext); return PATH;
 
 [0-9]+     		yylval=strdup(yytext); return INTEGER;
 [0-9.]+    		yylval=strdup(yytext); return DECIMAL;

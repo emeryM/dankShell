@@ -8,19 +8,19 @@
 
 %token INTEGER DECIMAL 
 %token WORD FLAG EOLN
-%token LS CD EXIT PATH SETENV
+%token LS CD EXIT PATH SETENV HOME_PATH HOME ROOT
 %token PIPE QUOTE OPEN_CARAT CLOSE_CARAT BACKSLASH AMPERSAND PLUS SEMICOLON OPEN_PAREN CLOSE_PAREN TWO_PERIODS
 
 
 %% 
 program: 	
 		
-		EXIT {printf("Smoke weed erry day...\n"); 
-				exit(EXIT_SUCCESS);}
-		| listFiles {fprintf(stderr, "dankShell: ");} program
-		| changeDir {fprintf(stderr, "dankShell: ");} program
-		
-		;
+			EXIT {printf("Smoke weed erry day...\n"); 
+					exit(EXIT_SUCCESS);}
+			| listFiles {fprintf(stderr, "dankShell: ");} program
+			| changeDir {fprintf(stderr, "dankShell: ");} program
+			
+			;
 
 listFiles: 	
 			LS EOLN{  
@@ -35,16 +35,44 @@ listFiles:
 			
 			;
 changeDir: 
-			CD WORD EOLN{ printf(" change directory to %s \n", $2);
-					chdir($2);}
-			
+			CD PATH EOLN{ printf(" change directory to %s \n", $2);
+					chdir($2);
+				}
+			|CD HOME_PATH WORD EOLN{ printf(" change directory to %s \n", $3);
+					chdir(getenv("HOME"));
+					chdir($3);
+				}
+			|CD WORD EOLN{ printf(" change directory to %s \n", $2);
+					chdir($2);
+				}
+
+			|CD TWO_PERIODS PATH EOLN {printf(" change directory to %s \n", $3);
+					chdir("..");
+					chdir($3);
+				}
+
+			|CD TWO_PERIODS WORD EOLN {printf(" change directory to %s \n", $3);
+					chdir("..");
+					chdir($3);
+				}
+
 			|CD TWO_PERIODS EOLN{printf(" change directory up 1 \n" );
-				chdir("..");}
-			
-			| CD EOLN {printf("change directory to home\n");
-				chdir(getenv("HOME"));
+				chdir("..");
 			}
 			
+			|CD EOLN {printf("change directory to home\n");
+				chdir(getenv("HOME"));
+			}
+			|CD HOME EOLN {printf("change directory to home\n");
+				chdir(getenv("HOME"));
+			}
+			|CD ROOT EOLN {printf("change directory to root\n");
+				chdir("/");
+			}
+			|CD HOME PATH EOLN {printf("change directory to home and then some\n");
+				chdir(getenv("HOME"));
+				chdir($3);
+			}
 			;
 
 			

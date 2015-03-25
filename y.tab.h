@@ -47,17 +47,20 @@
      EXIT = 265,
      PATH = 266,
      SETENV = 267,
-     PIPE = 268,
-     QUOTE = 269,
-     OPEN_CARAT = 270,
-     CLOSE_CARAT = 271,
-     BACKSLASH = 272,
-     AMPERSAND = 273,
-     PLUS = 274,
-     SEMICOLON = 275,
-     OPEN_PAREN = 276,
-     CLOSE_PAREN = 277,
-     TWO_PERIODS = 278
+     HOME_PATH = 268,
+     HOME = 269,
+     ROOT = 270,
+     PIPE = 271,
+     QUOTE = 272,
+     OPEN_CARAT = 273,
+     CLOSE_CARAT = 274,
+     BACKSLASH = 275,
+     AMPERSAND = 276,
+     PLUS = 277,
+     SEMICOLON = 278,
+     OPEN_PAREN = 279,
+     CLOSE_PAREN = 280,
+     TWO_PERIODS = 281
    };
 #endif
 /* Tokens.  */
@@ -71,17 +74,20 @@
 #define EXIT 265
 #define PATH 266
 #define SETENV 267
-#define PIPE 268
-#define QUOTE 269
-#define OPEN_CARAT 270
-#define CLOSE_CARAT 271
-#define BACKSLASH 272
-#define AMPERSAND 273
-#define PLUS 274
-#define SEMICOLON 275
-#define OPEN_PAREN 276
-#define CLOSE_PAREN 277
-#define TWO_PERIODS 278
+#define HOME_PATH 268
+#define HOME 269
+#define ROOT 270
+#define PIPE 271
+#define QUOTE 272
+#define OPEN_CARAT 273
+#define CLOSE_CARAT 274
+#define BACKSLASH 275
+#define AMPERSAND 276
+#define PLUS 277
+#define SEMICOLON 278
+#define OPEN_PAREN 279
+#define CLOSE_PAREN 280
+#define TWO_PERIODS 281
 
 
 
