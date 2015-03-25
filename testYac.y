@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 //#define YYSTYPE int;
 
 %}
@@ -25,7 +26,7 @@ addthings: INTEGER PLUS INTEGER { printf("the result is %d\n",($1+$3)); }
 
 listFiles: LS
 			{  
-				listOfFiles();
+				forkAndExec("ls");
              }
 			program
 			;
@@ -50,14 +51,19 @@ int yyerror(char *s){
 }
 
 
-void listOfFiles(){
-				int process = fork ();
+void forkAndExec(char * input){
+			   int process = fork ();
+			   char * bin = "/bin/";
+
+	           	char buf[512];
+			   snprintf(buf, sizeof buf, "%s%s", bin, input);
 
 	           if (process > 0){             
 	              wait ((int *) 0);      
 	           }else if (process == 0){ 
-
-	              execl( "/bin/ls", "ls", "-l", (char*)0 );
+	           	
+	           	
+	              execl( buf, input, "-l", (char*)0 );
 	                                   
 	              fprintf (stderr, "Can't execute \n");
 	              exit (1);

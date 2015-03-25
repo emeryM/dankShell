@@ -70,12 +70,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 //#define YYSTYPE int;
 
 
 
 /* Line 268 of yacc.c  */
-#line 79 "y.tab.c"
+#line 80 "y.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -155,7 +156,7 @@ typedef int YYSTYPE;
 
 
 /* Line 343 of yacc.c  */
-#line 159 "y.tab.c"
+#line 160 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -446,8 +447,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    14,    14,    14,    16,    17,    18,    22,    22,    27,
-      26,    32,    32,    35,    35
+       0,    15,    15,    15,    17,    18,    19,    23,    23,    28,
+      27,    33,    33,    36,    36
 };
 #endif
 
@@ -1386,14 +1387,14 @@ yyreduce:
         case 2:
 
 /* Line 1806 of yacc.c  */
-#line 14 "testYac.y"
+#line 15 "testYac.y"
     {fprintf(stderr, "dankShell: ");}
     break;
 
   case 6:
 
 /* Line 1806 of yacc.c  */
-#line 18 "testYac.y"
+#line 19 "testYac.y"
     {printf("Smoke weed erry day...\n"); 
 				exit(EXIT_SUCCESS);}
     break;
@@ -1401,23 +1402,23 @@ yyreduce:
   case 7:
 
 /* Line 1806 of yacc.c  */
-#line 22 "testYac.y"
+#line 23 "testYac.y"
     { printf("the result is %d\n",((yyvsp[(1) - (3)])+(yyvsp[(3) - (3)]))); }
     break;
 
   case 9:
 
 /* Line 1806 of yacc.c  */
-#line 27 "testYac.y"
+#line 28 "testYac.y"
     {  
-				listOfFiles();
+				forkAndExec("ls");
              }
     break;
 
   case 11:
 
 /* Line 1806 of yacc.c  */
-#line 32 "testYac.y"
+#line 33 "testYac.y"
     { printf(" change directory to %s \n", (yyvsp[(2) - (2)]));
 					chdir((yyvsp[(2) - (2)]));}
     break;
@@ -1425,7 +1426,7 @@ yyreduce:
   case 13:
 
 /* Line 1806 of yacc.c  */
-#line 35 "testYac.y"
+#line 36 "testYac.y"
     {printf(" change directory up 1 \n" );
 				chdir("..");}
     break;
@@ -1433,7 +1434,7 @@ yyreduce:
 
 
 /* Line 1806 of yacc.c  */
-#line 1437 "y.tab.c"
+#line 1438 "y.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1664,7 +1665,7 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 41 "testYac.y"
+#line 42 "testYac.y"
 
 
 int main(void){
@@ -1677,14 +1678,19 @@ int yyerror(char *s){
 }
 
 
-void listOfFiles(){
-				int process = fork ();
+void forkAndExec(char * input){
+			   int process = fork ();
+			   char * bin = "/bin/";
+
+	           	char buf[512];
+			   snprintf(buf, sizeof buf, "%s%s", bin, input);
 
 	           if (process > 0){             
 	              wait ((int *) 0);      
 	           }else if (process == 0){ 
-
-	              execl( "/bin/ls", "ls", "-l", (char*)0 );
+	           	
+	           	
+	              execl( buf, input, "-l", (char*)0 );
 	                                   
 	              fprintf (stderr, "Can't execute \n");
 	              exit (1);
