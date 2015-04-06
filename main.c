@@ -29,16 +29,16 @@ void understand_errors(){
 
 int get_command(){
 	init_scanner_and_parser();
-	/*
-	if(yyparse()){
+	if( yyparse() ){
+		printf("\n%s ", "getting here! err");
 		understand_errors();
 	}
 	else{
-		return OK;
+		printf("\n%s ", "getting here!");
+		return 1;
 	}
-	*/
-	//TEMPORARY
-	return OK;
+	printf("\n%s ", "getting here blah!");
+	return 1;
 }
 
 void execute_builtin(){
@@ -85,15 +85,15 @@ int main() {
 		print_prompt();
 		int CMD = get_command();
 		switch( CMD ){
-			case OK:
+			case 1:
 				printf("\n%s ", "OK!");
 				process_command();
 				break;
-			case ERRORS:
+			case 2:
 				printf("\n%s ", "Error!");
 				recover_from_errors();
 				break;
-			case EXIT:
+			case 3:
 				printf("\n%s\n", "Goodbye!");
 				exit( EXIT_SUCCESS );
 				break;

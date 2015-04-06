@@ -27,12 +27,12 @@ program:
 listFiles: 	
 			LS EOLN{  
 				printf("no flag\n");
-				forkAndExec("ls", "-a");
+				
             }
 			
 			|LS FLAG EOLN{
 				printf(" found flag %s\n",$2 );
-				forkAndExec("ls", $2);
+				
 			}
 			
 			;
@@ -77,17 +77,17 @@ changeDir:
 			}
 			;
 setEnvVar: 
-			SETENV WORD PATH{
+			SETENV WORD PATH EOLN{
 				printf("calling set env\n");
-				command.comname = $2;
+				command.comname = "setenv";
 				command.nargs = 2;
 				builtin = SETENV;
 
 			}
-			|UNSETENV WORD{
+			|UNSETENV WORD EOLN{
 				//do stuff
 			}
-			|PRINTENV{
+			|PRINTENV EOLN{
 				//do stuff
 			}
 			;
@@ -95,11 +95,6 @@ setEnvVar:
 			
 %%
 
-int main(void){
-	fprintf(stderr, "dankShell: ");
-	yyparse();
-	return 0;
-}
 
 int yyerror(char *s){
 	fprintf(stderr, "*%s*\n", s);

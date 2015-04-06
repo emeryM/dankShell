@@ -72,8 +72,7 @@ int builtin;
 #define _PRINTENV 2
 #define _UNSETENV 3
 #define _CD 4
-#define _ALIAS_LIST 5
-#define _ALIAS 6
-#define _UNALIAS 7
-#define _BYE 8
+#define _ALIAS 5
+#define _UNALIAS 6
+#define _BYE 7
 
