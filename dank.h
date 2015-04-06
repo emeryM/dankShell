@@ -41,7 +41,7 @@ typedef struct alias {
 	int used;
 	char *alname;
 	char *alstr;
-} ALIAS;
+} ALIASTAB;
 
 /* cache table structure */
 typedef struct cache {
@@ -51,7 +51,7 @@ typedef struct cache {
 
 COMMAND command;
 ARGTAB argtab;
-ALIAS alias;
+ALIASTAB alias;
 CACHE cache;
 
 int builtin;
