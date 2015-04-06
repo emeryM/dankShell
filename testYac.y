@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "dank.h"
 //#define YYSTYPE int;
 
 %}
@@ -17,8 +18,9 @@ program:
 		
 			EXIT {printf("Smoke weed erry day...\n"); 
 					exit(EXIT_SUCCESS);}
-			| listFiles {fprintf(stderr, "dankShell: ");} program
-			| changeDir {fprintf(stderr, "dankShell: ");} program
+			| listFiles {fprintf(stderr, "dankShell: ");}
+			| changeDir {fprintf(stderr, "dankShell: ");}
+			| setEnvVar {fprintf(stderr, "dankShell: ");}
 			
 			;
 
@@ -74,6 +76,16 @@ changeDir:
 				chdir($3);
 			}
 			;
+setEnvVar: 
+			SETENV WORD PATH{
+				{printf("calling set env\n");
+				command.comname = $2;
+				command.atptr[0] = $3;
+				command.atptr[1] = "1";
+				command.nargs = 2;
+				builtin = 1;
+
+			}
 
 			
 %%
@@ -92,11 +104,15 @@ int yyerror(char *s){
 void forkAndExec(char * input, char * flag){
 
 				printf("in forkanexec\n");
-			   int process = fork ();
+			   
 			   char * bin = "/bin/";
 
 	           	char buf[512];
 			   snprintf(buf, sizeof buf, "%s%s", bin, input);
+
+			   	//everything aboove this is jsut appending file path
+
+			   	int process = fork ();
 
 	           if (process > 0){             
 	              wait ((int *) 0);      

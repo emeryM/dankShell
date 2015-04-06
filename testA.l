@@ -9,7 +9,7 @@
 %% 
 [ \t]+     { ; }
 
-exit       return EXIT;
+bye       return EXIT;
 ls         return LS;
 cd         return CD;
 setenv     return SETENV;
