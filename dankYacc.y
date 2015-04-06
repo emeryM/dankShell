@@ -11,7 +11,7 @@
 %token WORD FLAG EOLN
 %token LS CD EXIT PATH SETENV HOME_PATH HOME ROOT
 %token PIPE QUOTE OPEN_CARAT CLOSE_CARAT BACKSLASH AMPERSAND PLUS SEMICOLON OPEN_PAREN CLOSE_PAREN TWO_PERIODS
-%token UNSETENV PRINTENV
+%token UNSETENV PRINTENV ALIAS UNALIAS
 
 %%
 program:
@@ -21,6 +21,7 @@ program:
 			| listFiles {return OK;}
 			| changeDir {return OK;}
 			| setEnvVar {return OK;}
+			| setAlias {return OK;}
 
 			;
 
@@ -85,12 +86,32 @@ setEnvVar:
 				builtin = SETENV;
 			}
 			|UNSETENV WORD EOLN{
-				//do stuff
+				command.comname = "unsetenv";
+				command.nargs = 1;
+				command.atptr->args[0] = $2;
+				builtin = UNSETENV;
 			}
 			|PRINTENV EOLN{
-				//do stuff
+				command.comname = "printenv";
+				builtin = PRINTENV;
 			}
 			;
+setAlias:
+			ALIAS WORD PATH{
+				command.comname = "alias";
+				command.nargs = 2;
+				command.atptr->args[0] = $2;
+				command.atptr->args[1] = $3;
+				builtin = ALIAS;
+			}
+			|UNALIAS WORD{
+				command.comname = "unalias";
+				command.nargs = 1;
+				command.atptr->args[0] = $2;
+				builtin = UNALIAS;
+			}
+			;
+
 
 
 %%

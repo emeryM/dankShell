@@ -16,6 +16,8 @@ cd         return CD;
 setenv     return SETENV;
 unsetenv   return UNSETENV;
 printenv   return PRINTENV;
+alias	   return ALIAS;
+unalias    return UNALIAS;
 
 
 "-"[a-zA-Z]+ 	yylval=strdup(yytext); return FLAG;
