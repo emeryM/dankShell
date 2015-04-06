@@ -8,6 +8,7 @@
 
 #include "dank.h"
 #include "y.tab.h"
+#define KGRN "\x1B[32m"
 
 void shell_init(){
 	printf("%s ", "INITIALIZING SHELL...");
@@ -15,7 +16,7 @@ void shell_init(){
 }
 
 void print_prompt(){
-	printf("\n%s", "dankShell: ");
+	printf(KGRN "\ndankShell: ");
 }
 
 void init_scanner_and_parser(){
