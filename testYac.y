@@ -11,7 +11,7 @@
 %token WORD FLAG EOLN
 %token LS CD EXIT PATH SETENV HOME_PATH HOME ROOT
 %token PIPE QUOTE OPEN_CARAT CLOSE_CARAT BACKSLASH AMPERSAND PLUS SEMICOLON OPEN_PAREN CLOSE_PAREN TWO_PERIODS
-
+%token UNSETENV PRINTENV
 
 %% 
 program: 	
@@ -86,6 +86,13 @@ setEnvVar:
 				builtin = 1;
 
 			}
+			|UNSETENV WORD{
+				//do stuff
+			}
+			|PRINTENV{
+				//do stuff
+			}
+			;
 
 			
 %%

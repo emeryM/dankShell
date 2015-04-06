@@ -9,10 +9,12 @@
 %% 
 [ \t]+     { ; }
 
-bye       return EXIT;
+bye        return EXIT;
 ls         return LS;
 cd         return CD;
 setenv     return SETENV;
+unsetenv   return UNSETENV;
+printenv   return PRINTENV;
 
 
 "-"[a-zA-Z]+ 	yylval=strdup(yytext); return FLAG;
