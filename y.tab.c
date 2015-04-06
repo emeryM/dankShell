@@ -460,8 +460,8 @@ static const yytype_int8 yyrhs[] =
 static const yytype_uint8 yyrline[] =
 {
        0,    19,    19,    21,    22,    23,    28,    33,    40,    43,
-      47,    51,    56,    61,    65,    68,    71,    74,    80,    89,
-      92
+      47,    51,    56,    61,    65,    68,    71,    74,    80,    87,
+      90
 };
 #endif
 
@@ -1498,23 +1498,21 @@ yyreduce:
     {
 				printf("calling set env\n");
 				command.comname = (yyvsp[(2) - (3)]);
-				command.atptr[0] = (yyvsp[(3) - (3)]);
-				command.atptr[1] = "1";
 				command.nargs = 2;
-				builtin = 1;
+				builtin = SETENV;
 
 			}
     break;
 
   case 19:
-#line 89 "testYac.y"
+#line 87 "testYac.y"
     {
 				//do stuff
 			}
     break;
 
   case 20:
-#line 92 "testYac.y"
+#line 90 "testYac.y"
     {
 				//do stuff
 			}
@@ -1522,7 +1520,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 1526 "y.tab.c"
+#line 1524 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1736,7 +1734,7 @@ yyreturn:
 }
 
 
-#line 98 "testYac.y"
+#line 96 "testYac.y"
 
 
 int main(void){
@@ -1748,34 +1746,3 @@ int main(void){
 int yyerror(char *s){
 	fprintf(stderr, "*%s*\n", s);
 }
-
-
-void forkAndExec(char * input, char * flag){
-
-				printf("in forkanexec\n");
-			   
-			   char * bin = "/bin/";
-
-	           	char buf[512];
-			   snprintf(buf, sizeof buf, "%s%s", bin, input);
-
-			   	//everything aboove this is jsut appending file path
-
-			   	int process = fork ();
-
-	           if (process > 0){             
-	              wait ((int *) 0);      
-	           }else if (process == 0){ 
-	           	
-	           	
-	              execl( buf, input, flag, (char*)0 );
-	                                   
-	              fprintf (stderr, "Can't execute \n");
-	              exit (1);
-	              
-	           }else if(process == -1){
-
-	              fprintf (stderr, "Can't fork!\n");
-	              exit (2);
-	              }
-	}

@@ -80,10 +80,8 @@ setEnvVar:
 			SETENV WORD PATH{
 				printf("calling set env\n");
 				command.comname = $2;
-				command.atptr[0] = $3;
-				command.atptr[1] = "1";
 				command.nargs = 2;
-				builtin = 1;
+				builtin = SETENV;
 
 			}
 			|UNSETENV WORD{
@@ -106,34 +104,3 @@ int main(void){
 int yyerror(char *s){
 	fprintf(stderr, "*%s*\n", s);
 }
-
-
-void forkAndExec(char * input, char * flag){
-
-				printf("in forkanexec\n");
-			   
-			   char * bin = "/bin/";
-
-	           	char buf[512];
-			   snprintf(buf, sizeof buf, "%s%s", bin, input);
-
-			   	//everything aboove this is jsut appending file path
-
-			   	int process = fork ();
-
-	           if (process > 0){             
-	              wait ((int *) 0);      
-	           }else if (process == 0){ 
-	           	
-	           	
-	              execl( buf, input, flag, (char*)0 );
-	                                   
-	              fprintf (stderr, "Can't execute \n");
-	              exit (1);
-	              
-	           }else if(process == -1){
-
-	              fprintf (stderr, "Can't fork!\n");
-	              exit (2);
-	              }
-	}
