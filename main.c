@@ -12,8 +12,6 @@
 void shell_init(){
 	printf("%s ", "INITIALIZING SHELL...");
 	command.atptr = &argtab;
-	//char *path = getenv("PATH");
-	//printf("\nPATH = %s", path);
 }
 
 void print_prompt(){
@@ -47,10 +45,9 @@ void execute_builtin(){
 	switch( builtin ){
 		case SETENV:
 		printf("\n%s ", "getting to execute builtin");
-		printf("\nCommand is: %s\n", command.comname);
-		printf("\narg 1 is: %s\n", command.atptr->args[0]);
-		//printf("\narg 2 is: %s\n", command.atptr->args[1]);
-		exit( EXIT_SUCCESS );
+		printf("\nCommand is: %s", command.comname);
+		printf("\narg 1 is: %s", command.atptr->args[0]);
+		printf("\narg 2 is: %s", command.atptr->args[1]);
 		break;
 		case PRINTENV:
 		break;

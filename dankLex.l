@@ -1,7 +1,8 @@
 %{
+#define YYSTYPE char *
 #include <stdio.h>
 #include "y.tab.h"
-
+extern char* yylval;
 
 
 %}
