@@ -3,7 +3,7 @@ all: hello
 hello:   dankLex.l dankYacc.y
 	rm -f *o dankShell y.tab.h y.tab.c lex.yy.c
 	flex dankLex.l
-	bison -d dankYacc.y
+	bison -dy dankYacc.y
 	gcc lex.yy.c y.tab.c main.c -o dankShell
 
 clean:
@@ -26,6 +26,6 @@ cpush:
 start: dankLex.l dankYacc.y
 	rm -f *o dankShell y.tab.h y.tab.c lex.yy.c
 	flex dankLex.l
-	bison -d dankYacc.y
+	bison -dy dankYacc.y
 	gcc lex.yy.c y.tab.c main.c -o dankShell
 	./dankShell
