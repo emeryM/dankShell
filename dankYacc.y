@@ -1,42 +1,42 @@
 %{
+#define YYSTYPE char *
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "dank.h"
-//#define YYSTYPE int;
 
 %}
 
-%token INTEGER DECIMAL 
+%token INTEGER DECIMAL
 %token WORD FLAG EOLN
 %token LS CD EXIT PATH SETENV HOME_PATH HOME ROOT
 %token PIPE QUOTE OPEN_CARAT CLOSE_CARAT BACKSLASH AMPERSAND PLUS SEMICOLON OPEN_PAREN CLOSE_PAREN TWO_PERIODS
 %token UNSETENV PRINTENV
 
-%% 
-program: 	
-		
-			EXIT {printf("Smoke weed erry day...\n"); 
+%%
+program:
+
+			EXIT EOLN {printf("Smoke weed erry day...\n");
 					exit(EXIT_SUCCESS);}
-			| listFiles {fprintf(stderr, "dankShell: ");}
-			| changeDir {fprintf(stderr, "dankShell: ");}
-			| setEnvVar {fprintf(stderr, "dankShell: ");}
-			
+			| listFiles {return OK;}
+			| changeDir {return OK;}
+			| setEnvVar {return OK;}
+
 			;
 
-listFiles: 	
-			LS EOLN{  
+listFiles:
+			LS EOLN{
 				printf("no flag\n");
-				
+
             }
-			
+
 			|LS FLAG EOLN{
 				printf(" found flag %s\n",$2 );
-				
+
 			}
-			
+
 			;
-changeDir: 
+changeDir:
 			CD PATH EOLN{ printf(" change directory to %s \n", $2);
 					chdir($2);
 				}
@@ -61,7 +61,7 @@ changeDir:
 			|CD TWO_PERIODS EOLN{printf(" change directory up 1 \n" );
 				chdir("..");
 			}
-			
+
 			|CD EOLN {printf("change directory to home\n");
 				chdir(getenv("HOME"));
 			}
@@ -76,12 +76,15 @@ changeDir:
 				chdir($3);
 			}
 			;
-setEnvVar: 
+setEnvVar:
 			SETENV WORD PATH EOLN{
-				printf("calling set env\n");
+
 				command.comname = "setenv";
 				command.nargs = 2;
+				printf("dolla 2 is: %s", $2);
+				command.atptr->args[0] = "test";
 				builtin = SETENV;
+				printf("calling set env\n");
 
 			}
 			|UNSETENV WORD EOLN{
@@ -92,7 +95,7 @@ setEnvVar:
 			}
 			;
 
-			
+
 %%
 
 

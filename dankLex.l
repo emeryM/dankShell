@@ -6,7 +6,7 @@
 
 %}
 
-%% 
+%%
 [ \t]+     { ; }
 
 bye        return EXIT;
@@ -48,4 +48,3 @@ printenv   return PRINTENV;
 int yywrap(void){
 		return 1;
 }
-

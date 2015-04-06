@@ -4,7 +4,7 @@
  */
 
 #define MAXCMDS 50
-#define MAXARGS 3000
+#define MAXARGS 300
 #define MAXALIAS 100
 #define MAXCACHE 100
 #define MAXPATH 50
@@ -62,7 +62,7 @@ int builtin;
 	2	printenv
 	3	unsetenv variable
 	4	cd word_directory_name
-	5	alias 
+	5	alias
 	6	alias name word
 	7	unalias name
 	8	bye
@@ -75,4 +75,3 @@ int builtin;
 #define _ALIAS 5
 #define _UNALIAS 6
 #define _BYE 7
-

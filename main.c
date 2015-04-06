@@ -11,6 +11,7 @@
 
 void shell_init(){
 	printf("%s ", "INITIALIZING SHELL...");
+	command.atptr = &argtab;
 	//char *path = getenv("PATH");
 	//printf("\nPATH = %s", path);
 }
@@ -20,18 +21,19 @@ void print_prompt(){
 }
 
 void init_scanner_and_parser(){
-	
+
 }
 
 void understand_errors(){
-	
+
 }
 
 int get_command(){
 	init_scanner_and_parser();
 	if( yyparse() ){
-		printf("\n%s ", "getting here! err");
+
 		understand_errors();
+		return 1;
 	}
 	else{
 		printf("\n%s ", "getting here!");
@@ -44,7 +46,10 @@ int get_command(){
 void execute_builtin(){
 	switch( builtin ){
 		case SETENV:
-		printf("\nCommand is: %s", command.comname);
+		printf("\n%s ", "getting to execute builtin");
+		printf("\nCommand is: %s\n", command.comname);
+		printf("\narg 1 is: %s\n", command.atptr->args[0]);
+		//printf("\narg 2 is: %s\n", command.atptr->args[1]);
 		exit( EXIT_SUCCESS );
 		break;
 		case PRINTENV:
@@ -63,20 +68,22 @@ void execute_builtin(){
 }
 
 void execute_command(){
-	
+
 }
 
 void process_command(){
 	if ( builtin ){
+		printf("\n%s ", "getting to process builtin command");
 		execute_builtin();
 	}
 	else{
+		printf("\n%s ", "getting to process command");
 		execute_command();
 	}
 }
 
 void recover_from_errors(){
-	
+
 }
 
 int main() {
