@@ -78,10 +78,8 @@ changeDir:
 			;
 setEnvVar:
 			SETENV WORD PATH EOLN{
-				printf("calling set env\n");
 				command.comname = "setenv";
 				command.nargs = 2;
-				printf("dolla 2 is %s\n", $2);
 				command.atptr->args[0] = $2;
 				command.atptr->args[1] = $3;
 				builtin = SETENV;

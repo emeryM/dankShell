@@ -67,11 +67,3 @@ int builtin;
 	7	unalias name
 	8	bye
 */
-
-#define _SETENV 1
-#define _PRINTENV 2
-#define _UNSETENV 3
-#define _CD 4
-#define _ALIAS 5
-#define _UNALIAS 6
-#define _BYE 7
