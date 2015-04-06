@@ -78,7 +78,7 @@ changeDir:
 			;
 setEnvVar: 
 			SETENV WORD PATH{
-				{printf("calling set env\n");
+				printf("calling set env\n");
 				command.comname = $2;
 				command.atptr[0] = $3;
 				command.atptr[1] = "1";

@@ -7,16 +7,12 @@
 #include <stdio.h>
 
 #include "dank.h"
-
-COMMAND command;
-ARGTAB argtab;
-ALIAS alias;
-CACHE cache;
+#include "y.tab.h"
 
 void shell_init(){
 	printf("%s ", "INITIALIZING SHELL...");
-	char *path = getenv("PATH");
-	printf("\nPATH = %s", path);
+	//char *path = getenv("PATH");
+	//printf("\nPATH = %s", path);
 }
 
 void print_prompt(){
@@ -42,11 +38,28 @@ int get_command(){
 	}
 	*/
 	//TEMPORARY
-	return BYE;
+	return OK;
 }
 
 void execute_builtin(){
-	
+	switch( builtin ){
+		case SETENV:
+		printf("\nCommand is: %s", command.comname);
+		exit( EXIT_SUCCESS );
+		break;
+		case PRINTENV:
+		break;
+		case UNSETENV:
+		break;
+		case CD:
+		break;
+		/*case ALIAS:
+		break;
+		case UNALIAS:
+		break;*/
+		case EXIT:
+		break;
+	}
 }
 
 void execute_command(){
@@ -73,14 +86,14 @@ int main() {
 		int CMD = get_command();
 		switch( CMD ){
 			case OK:
-				printf("%s ", "OK!");
+				printf("\n%s ", "OK!");
 				process_command();
 				break;
 			case ERRORS:
-				printf("%s ", "Error!");
+				printf("\n%s ", "Error!");
 				recover_from_errors();
 				break;
-			case BYE:
+			case EXIT:
 				printf("\n%s\n", "Goodbye!");
 				exit( EXIT_SUCCESS );
 				break;
