@@ -48,9 +48,13 @@ void execute_builtin(){
 		case SETENV:
 		setenv(command.atptr->args[0], command.atptr->args[1], 1);
 		char* test = getenv(command.atptr->args[0]);
-		printf("\n%s", test);
+		printf("%s", test);
 		break;
 		case PRINTENV:
+		/** !!- THIS DOES NOT UPDATE -!! **/
+		for(char **current = environ; *current; current++){
+			puts(*current);
+		}
 		break;
 		case UNSETENV:
 		break;
@@ -164,9 +168,11 @@ void recover_from_errors(){
 
 }
 
-int main() {
+int main( int argc, char* argv[] ) {
 	shell_init();
+
 	while(1){
+
 		print_prompt();
 		int CMD = get_command();
 		switch( CMD ){
