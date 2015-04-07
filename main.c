@@ -13,11 +13,12 @@ void shell_init(){
 	int i;
 	for (i= 0; i < MAXCMDS; ++i){
 		ARGTAB *args = malloc(sizeof(ARGTAB));
-		COMMAND cmd;// = malloc(sizeof(COMMAND));
+		COMMAND cmd;
 		cmd.atptr = args;
 		cmdtab.cmd[i] = cmd;
 	}
 	alias.used = 0;
+	alias_detected = 0;
 	currcmd = 0;
 	cmdcount = 0;
 }
