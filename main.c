@@ -9,6 +9,7 @@
 #include "dank.h"
 #include "y.tab.h"
 #define KGRN "\x1B[32m"
+#define KBLK "\x1B[0m"
 
 void shell_init(){
 	printf("%s ", "INITIALIZING SHELL...");
@@ -16,7 +17,8 @@ void shell_init(){
 }
 
 void print_prompt(){
-	printf(KGRN "\ndankShell: ");
+	printf(KGRN "\ndankShell:");
+	printf(KBLK " ");
 }
 
 void init_scanner_and_parser(){
@@ -24,31 +26,29 @@ void init_scanner_and_parser(){
 }
 
 void understand_errors(){
-
+	printf("There were errors");
 }
 
 int get_command(){
 	init_scanner_and_parser();
 	if( yyparse() ){
-
 		understand_errors();
 		return 1;
 	}
 	else{
-		printf("\n%s ", "getting here!");
-		return 1;
+		if( builtin == EXIT ){
+			return 2;
+		}
+		return 0;
 	}
-	printf("\n%s ", "getting here blah!");
-	return 1;
 }
 
 void execute_builtin(){
 	switch( builtin ){
 		case SETENV:
-		printf("\n%s ", "getting to execute builtin");
-		printf("\nCommand is: %s", command.comname);
-		printf("\narg 1 is: %s", command.atptr->args[0]);
-		printf("\narg 2 is: %s", command.atptr->args[1]);
+		setenv(command.atptr->args[0], command.atptr->args[1], 1);
+		char* test = getenv(command.atptr->args[0]);
+		printf("\n%s", test);
 		break;
 		case PRINTENV:
 		break;
@@ -56,10 +56,10 @@ void execute_builtin(){
 		break;
 		case CD:
 		break;
-		/*case ALIAS:
+		case ALIAS:
 		break;
 		case UNALIAS:
-		break;*/
+		break;
 		case EXIT:
 		break;
 	}
@@ -71,11 +71,9 @@ void execute_command(){
 
 void process_command(){
 	if ( builtin ){
-		printf("\n%s ", "getting to process builtin command");
 		execute_builtin();
 	}
 	else{
-		printf("\n%s ", "getting to process command");
 		execute_command();
 	}
 }
@@ -90,15 +88,13 @@ int main() {
 		print_prompt();
 		int CMD = get_command();
 		switch( CMD ){
-			case 1:
-				printf("\n%s ", "OK!");
+			case 0:
 				process_command();
 				break;
-			case 2:
-				printf("\n%s ", "Error!");
+			case 1:
 				recover_from_errors();
 				break;
-			case 3:
+			case 2:
 				printf("\n%s\n", "Goodbye!");
 				exit( EXIT_SUCCESS );
 				break;
