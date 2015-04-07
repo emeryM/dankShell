@@ -1,5 +1,16 @@
 ls
 cd ..
-ls
 ls -l
+setenv GREET hello
+printenv
+unsetenv GREET
+printenv
+alias
+alias a apple
+alias b banana
+alias c celery
+alias d dragonfruit
+alias
+unalias c
+alias
 bye

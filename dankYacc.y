@@ -2,7 +2,6 @@
 #define YYSTYPE char *
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "dank.h"
 
 %}
@@ -16,8 +15,7 @@
 %%
 program:
 
-			EXIT EOLN {printf("Smoke weed erry day...\n");
-					exit(EXIT_SUCCESS);}
+			  goodbye 	{return OK;}
 			| listFiles {return OK;}
 			| changeDir {return OK;}
 			| setEnvVar {return OK;}
@@ -25,7 +23,11 @@ program:
 			| piping    {return OK;}
 
 			;
-
+goodbye:
+			EXIT EOLN{
+				builtin = EXIT;
+			}
+			;
 listFiles:
 			LS EOLN{
 				printf("no flag");
@@ -86,7 +88,7 @@ changeDir:
 			}
 			;
 setEnvVar:
-			SETENV WORD PATH EOLN{
+			SETENV WORD WORD EOLN{
 				command.comname = "setenv";
 				command.nargs = 2;
 				command.atptr->args[0] = $2;

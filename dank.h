@@ -3,6 +3,9 @@
  *-------------------------------------------------------------------
  */
 
+#include <string.h>
+#include <unistd.h>
+
 #define MAXCMDS 50
 #define MAXARGS 300
 #define MAXALIAS 100
@@ -58,15 +61,3 @@ ALIASTAB alias;
 CACHE cache;
 extern char **environ;
 int builtin;
-/*
-	builtin values
-	0	FALSE - not a builtin
-	1	setenv variable word
-	2	printenv
-	3	unsetenv variable
-	4	cd word_directory_name
-	5	alias
-	6	alias name word
-	7	unalias name
-	8	bye
-*/

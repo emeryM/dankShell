@@ -6,10 +6,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-
 #include "dank.h"
 #include "y.tab.h"
-
 
 void shell_init(){
 	printf("%s ", "INITIALIZING SHELL...");
@@ -22,13 +20,8 @@ void print_prompt(){
 	printf(KBLK " ");
 }
 
-void understand_errors(){
-	printf("There were errors");
-}
-
 int get_command(){
 	if( yyparse() ){
-		understand_errors();
 		return 1;
 	}
 	else{
@@ -45,7 +38,7 @@ void list_aliases(){
 	}
 	else{
 		for(int i = 0; i < alias.used; ++i ){
-			printf("\n%s %s", alias.alname[i], alias.alstr[i]);
+			printf("\n%s\t%s", alias.alname[i], alias.alstr[i]);
 		}
 	}
 }
@@ -204,9 +197,7 @@ void recover_from_errors(){
 
 int main( int argc, char* argv[] ) {
 	shell_init();
-
 	while(1){
-
 		print_prompt();
 		int CMD = get_command();
 		switch( CMD ){
@@ -217,7 +208,7 @@ int main( int argc, char* argv[] ) {
 				recover_from_errors();
 				break;
 			case 2:
-				printf("\n%s\n", "Goodbye!");
+				printf("%s\n", "Smoke weed erry day...");
 				exit( EXIT_SUCCESS );
 				break;
 			default:

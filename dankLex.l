@@ -16,7 +16,7 @@ cd         return CD;
 setenv     return SETENV;
 unsetenv   return UNSETENV;
 printenv   return PRINTENV;
-alias	   return ALIAS;
+alias	   	 return ALIAS;
 unalias    return UNALIAS;
 
 
@@ -45,7 +45,6 @@ unalias    return UNALIAS;
 
 [0-9]+     		yylval=strdup(yytext); return INTEGER;
 [0-9.]+    		yylval=strdup(yytext); return DECIMAL;
-
 
 %%
 
