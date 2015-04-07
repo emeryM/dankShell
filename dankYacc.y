@@ -8,7 +8,7 @@
 
 %token INTEGER DECIMAL
 %token WORD FLAG EOLN QUOTED
-%token LS CD EXIT PATH SETENV HOME_PATH HOME ROOT
+%token LS CD EXIT SETENV HOME_PATH HOME ROOT
 %token PIPE QUOTE OPEN_CARAT CLOSE_CARAT BACKSLASH AMPERSAND PLUS SEMICOLON OPEN_PAREN CLOSE_PAREN TWO_PERIODS
 %token UNSETENV PRINTENV ALIAS UNALIAS
 
@@ -21,6 +21,7 @@ program:
 			| setEnvVar {return OK;}
 			| setAlias  {return OK;}
 			| piping    {return OK;}
+			| commands  {return OK;}
 
 			;
 goodbye:
@@ -48,7 +49,7 @@ listFiles:
 
 			;
 changeDir:
-			CD PATH EOLN{ printf(" change directory to %s ", $2);
+			CD WORD EOLN{ printf(" change directory to %s ", $2);
 					chdir($2);
 				}
 			|CD HOME_PATH WORD EOLN{ printf(" change directory to %s ", $3);
@@ -57,11 +58,6 @@ changeDir:
 				}
 			|CD WORD EOLN{ printf(" change directory to %s ", $2);
 					chdir($2);
-				}
-
-			|CD TWO_PERIODS PATH EOLN {printf(" change directory to %s ", $3);
-					chdir("..");
-					chdir($3);
 				}
 
 			|CD TWO_PERIODS WORD EOLN {printf(" change directory to %s ", $3);
@@ -82,7 +78,7 @@ changeDir:
 			|CD ROOT EOLN {printf("change directory to root");
 				chdir("/");
 			}
-			|CD HOME PATH EOLN {printf("change directory to home and then some");
+			|CD HOME WORD EOLN {printf("change directory to home and then some");
 				chdir(getenv("HOME"));
 				chdir($3);
 			}
