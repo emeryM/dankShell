@@ -20,7 +20,7 @@ alias	   	 return ALIAS;
 unalias    return UNALIAS;
 
 
-"-"[a-zA-Z]+ 	yylval=strdup(yytext); return FLAG;
+
 
 ".."       return TWO_PERIODS;
 ";"        return SEMICOLON;
@@ -39,7 +39,7 @@ unalias    return UNALIAS;
 "/"		   return ROOT;
 
 
-[a-zA-Z/.\-]+  		yylval=strdup(yytext); return WORD;
+"-"?[a-zA-Z/.]+ 		yylval=strdup(yytext); return WORD;
 
 \"([^\\\"]|\\.)*\"				yylval=strdup(yytext); return QUOTED;
 
