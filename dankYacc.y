@@ -33,33 +33,41 @@ goodbye:
 changeDir:
 			CD WORD EOLN{ printf(" change directory to %s ", $2);
 					chdir($2);
+					builtin = CD;
 				}
 			|CD HOME_PATH WORD EOLN{ printf(" change directory to %s ", $3);
 					chdir(getenv("HOME"));
 					chdir($3);
+					builtin = CD;
 				}
 
 			|CD TWO_PERIODS WORD EOLN {printf(" change directory to %s ", $3);
 					chdir("..");
 					chdir($3);
+					builtin= CD;
 				}
 
 			|CD TWO_PERIODS EOLN{printf(" change directory up 1 " );
 				chdir("..");
+				builtin= CD;
 			}
 
 			|CD EOLN {printf("change directory to home");
 				chdir(getenv("HOME"));
+				builtin= CD;
 			}
 			|CD HOME EOLN {printf("change directory to home");
 				chdir(getenv("HOME"));
+				builtin= CD;
 			}
 			|CD ROOT EOLN {printf("change directory to root");
 				chdir("/");
+				builtin= CD;
 			}
 			|CD HOME WORD EOLN {printf("change directory to home and then some");
 				chdir(getenv("HOME"));
 				chdir($3);
+				builtin= CD;
 			}
 			;
 setEnvVar:
@@ -120,14 +128,18 @@ piping:
 			;
 commands:   
 			WORD{
+				printf("first thing");
 				cmdtab.cmd[currcmd].cmdname = $1;
 				cmdtab.cmd[currcmd].nargs = 0;
 				cmdtab.cmd[currcmd].atptr->args[0] = $1;
 				builtin = 0;
 			}
 			|commands WORD{
+				
 				cmdtab.cmd[currcmd].nargs++;
-				cmdtab.cmd[currcmd].atptr->args[cmdtab.cmd[currcmd].nargs] = $1;
+				printf("we dem args, nargs: %d\n", cmdtab.cmd[currcmd].nargs);
+				printf("the arg is: %s\n",$2 );
+				cmdtab.cmd[currcmd].atptr->args[cmdtab.cmd[currcmd].nargs] = $2;
 			}
 			;
 			

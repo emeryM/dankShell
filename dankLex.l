@@ -39,7 +39,7 @@ unalias    return UNALIAS;
 "/"		   return ROOT;
 
 
-[a-zA-Z/.]+  		yylval=strdup(yytext); return WORD;
+[a-zA-Z/.\-]+  		yylval=strdup(yytext); return WORD;
 
 \"([^\\\"]|\\.)*\"				yylval=strdup(yytext); return QUOTED;
 

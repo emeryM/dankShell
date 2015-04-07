@@ -132,6 +132,8 @@ void execute_command(){
     }else if(process == -1){
     	fprintf (stderr, "Can't fork!\n");
     	exit (2);
+    }else{
+    	printf("Syntax Error\n");
     }
 }
 
@@ -187,6 +189,7 @@ void piped_and_sniped(){
 void process_command(){
 	if ( builtin ){
 		execute_builtin();
+		clear_args();
 	}
 	else{
 		//this if statement is for testing pipes
