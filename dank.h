@@ -7,9 +7,8 @@
 #include <unistd.h>
 
 #define MAXCMDS 50
-#define MAXARGS 300
+#define MAXARGS 100
 #define MAXALIAS 100
-#define MAXCACHE 100
 #define MAXPATH 50
 
 #define OK 0
@@ -22,25 +21,29 @@
 #define FIRST 2
 #define LAST 3
 
-#define REGISTRY "REGISTRY"
-
 #define KGRN "\x1B[32m"
 #define KBLK "\x1B[0m"
 
-/* command line arguments structures */
-typedef struct comargs {
+/* command arguments structures */
+typedef struct cmdargs {
 	char *args[MAXARGS];
 } ARGTAB;
 
-/* command line structure */
-typedef struct com {
-	char	*comname;
+/* command structure */
+typedef struct cmd {
+	char	*cmdname;
 	int remote;
 	int infd;
 	int outfd;
 	int nargs;
 	ARGTAB *atptr;
 }	COMMAND;
+
+/* command table */
+typedef struct cmdtab {
+	COMMAND cmd[MAXCMDS];
+} CMDTAB;
+
 
 /* alias structure */
 typedef struct alias {
@@ -49,15 +52,9 @@ typedef struct alias {
 	char *alstr[MAXALIAS];
 } ALIASTAB;
 
-/* cache table structure */
-typedef struct cache {
-	char *cmd;
-	char *hostport;
-} CACHE;
-
-COMMAND command;
-ARGTAB argtab;
+CMDTAB cmdtab;
 ALIASTAB alias;
-CACHE cache;
 extern char **environ;
 int builtin;
+int currcmd; //current command
+int cmdcount; //number of commands
