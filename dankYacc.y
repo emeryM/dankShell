@@ -139,7 +139,7 @@ piping:
 				builtin = 0;
 			}
 			;
-
+commands: WORD WORD WORD {};
 
 
 %%
