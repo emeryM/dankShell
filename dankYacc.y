@@ -97,14 +97,19 @@ setEnvVar:
 			}
 			;
 setAlias:
-			ALIAS WORD PATH{
+			ALIAS WORD PATH EOLN{
 				command.comname = "alias";
 				command.nargs = 2;
 				command.atptr->args[0] = $2;
 				command.atptr->args[1] = $3;
 				builtin = ALIAS;
 			}
-			|UNALIAS WORD{
+			|ALIAS EOLN{
+				command.comname = "alias";
+				command.nargs = 0;
+				builtin = ALIAS;
+			}
+			|UNALIAS WORD EOLN{
 				command.comname = "unalias";
 				command.nargs = 1;
 				command.atptr->args[0] = $2;
