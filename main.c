@@ -140,22 +140,6 @@ void clear_args(){
 	}
 }
 
-void process_command(){
-	if ( builtin ){
-		execute_builtin();
-	}
-	else{
-		//this if statement is for testing pipes
-		printf("calling : %s\n",command.comname );
-		if(strcmp(command.comname,"pipe") == 0){
-			printf("calling piped and sniped: %s\n",command.comname );
-			piped_and_sniped();}
-		else{
-		execute_command();
-		clear_args();
-		}
-	}
-}
 void piped_and_sniped(){
 	  int des_p[2];
         if(pipe(des_p) == -1) {
@@ -166,7 +150,7 @@ void piped_and_sniped(){
         if(fork() == 0)        //first fork
         {
             close(1);          //closing stdout
-            dup(des_p[1]);     //replacing stdout with pipe write 
+            dup(des_p[1]);     //replacing stdout with pipe write
             close(des_p[0]);   //closing pipe read
             close(des_p[1]);
 
@@ -194,7 +178,24 @@ void piped_and_sniped(){
         wait(0);
         wait(0);
 
-	
+
+}
+
+void process_command(){
+	if ( builtin ){
+		execute_builtin();
+	}
+	else{
+		//this if statement is for testing pipes
+		printf("calling : %s\n",command.comname );
+		if(strcmp(command.comname,"pipe") == 0){
+			printf("calling piped and sniped: %s\n",command.comname );
+			piped_and_sniped();}
+		else{
+		execute_command();
+		clear_args();
+		}
+	}
 }
 
 void recover_from_errors(){
