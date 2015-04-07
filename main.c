@@ -21,6 +21,7 @@ void shell_init(){
 	alias_detected = 0;
 	currcmd = 0;
 	cmdcount = 0;
+	hasPipes = 0;
 }
 
 void print_prompt(){
@@ -144,15 +145,69 @@ void clear_args(){
 	{
 		cmdtab.cmd[currcmd].atptr->args[i] = NULL;
 	}
+	currcmd = 0;
+	hasPipes = 0;
 }
 
 void piped_and_sniped(){
-	  int des_p[2];
+
+		//temp 
+		currcmd = 0;
+
+		//do maht here to set the size of the des_p array
+		int num_pipes = 2;//set it
+	    int des_p[num_pipes];// array of pid's for pipe destinations
         if(pipe(des_p) == -1) {
           perror("Pipe failed");
           exit(1);
         }
+        int i = 0;
+        currcmd = -1;
+       // hasPipes+=1;
+        while (hasPipes >= 0){
+        	++currcmd;
+        	printf("cmd value is: %d\n", currcmd );
 
+        	if(fork() == 0)        //first fork
+        	{
+        		
+        		printf("pipe value is: %d\n", hasPipes);
+        		printf("cmd value is: %d\n", currcmd );
+	            close(hasPipes);          //closing stdout
+	            dup(des_p[hasPipes]);     //replacing stdout with pipe write
+	          
+	            //close(des_p[0]);   //closing pipe read
+	            //close(des_p[1]);
+	            int k;
+	            for(k=0; k<2; k++)
+	        		{close(des_p[k]);//close(bc[i]); close(ca[i]); }
+	        	}
+	        	
+
+	            //const char* prog1[] = { "ls", "-l", 0};
+	            //execvp(prog1[0], prog1);
+	            cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
+    			execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
+	            perror("execvp of ls failed");
+	            exit(1);
+	        }
+	        --hasPipes;
+        }
+	       /*  if(fork() == 0)        //creating 2nd child
+        {
+            close(0);          //closing stdin
+            dup(des_p[0]);     //replacing stdin with pipe read
+            close(des_p[1]);   //closing pipe write
+            close(des_p[0]);
+
+            currcmd++;
+             cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
+    			execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
+            perror("execvp of wc failed");
+            exit(1);
+        }*/
+        //attempt for pipes is above
+        /*
         if(fork() == 0)        //first fork
         {
             close(1);          //closing stdout
@@ -178,7 +233,7 @@ void piped_and_sniped(){
             perror("execvp of wc failed");
             exit(1);
         }
-
+*/
         close(des_p[0]);
         close(des_p[1]);
         wait(0);
@@ -195,7 +250,7 @@ void process_command(){
 	else{
 		//this if statement is for testing pipes
 		printf("calling : %s\n",cmdtab.cmd[currcmd].cmdname );
-		if(strcmp(cmdtab.cmd[currcmd].cmdname,"pipe") == 0){
+		if(hasPipes > 0){
 			printf("calling piped and sniped: %s\n",cmdtab.cmd[currcmd].cmdname );
 			piped_and_sniped();}
 		else{

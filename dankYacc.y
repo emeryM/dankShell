@@ -128,7 +128,7 @@ piping:
 			;
 commands:   
 			WORD{
-				printf("first thing");
+				printf("first thing cmmand name is: %s\n", $1);
 				cmdtab.cmd[currcmd].cmdname = $1;
 				cmdtab.cmd[currcmd].nargs = 0;
 				cmdtab.cmd[currcmd].atptr->args[0] = $1;
@@ -140,6 +140,17 @@ commands:
 				printf("we dem args, nargs: %d\n", cmdtab.cmd[currcmd].nargs);
 				printf("the arg is: %s\n",$2 );
 				cmdtab.cmd[currcmd].atptr->args[cmdtab.cmd[currcmd].nargs] = $2;
+			}
+			|commands PIPE WORD{
+				printf("after pipe cammand name is : %s\n", $3);
+
+				++hasPipes;
+				++currcmd;
+				cmdtab.cmd[currcmd].cmdname = $3;
+				cmdtab.cmd[currcmd].nargs = 0;
+				cmdtab.cmd[currcmd].atptr->args[0] = $3;
+				builtin = 0;
+
 			}
 			;
 			

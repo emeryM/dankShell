@@ -59,3 +59,4 @@ int builtin;
 int alias_detected;
 int currcmd; //current command
 int cmdcount; //number of commands
+int hasPipes;
