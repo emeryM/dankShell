@@ -10,9 +10,15 @@
 #include "y.tab.h"
 
 void shell_init(){
-	printf("%s ", "INITIALIZING SHELL...");
-	command.atptr = &argtab;
+	for (int i = 0; i < MAXCMDS; ++i){
+		ARGTAB *args = malloc(sizeof(ARGTAB));
+		COMMAND cmd;// = malloc(sizeof(COMMAND));
+		cmd.atptr = args;
+		cmdtab.cmd[i] = cmd;
+	}
 	alias.used = 0;
+	currcmd = 0;
+	cmdcount = 0;
 }
 
 void print_prompt(){
@@ -49,11 +55,11 @@ void set_alias(){
 	}
 	else{
 		int i = 0;
-		while( i < alias.used && strcmp(command.atptr->args[0], alias.alname[i]) ){
+		while( i < alias.used && strcmp(cmdtab.cmd[currcmd].atptr->args[0], alias.alname[i]) ){
 			++i;
 		}
-		alias.alname[i] = command.atptr->args[0];
-		alias.alstr[i] = command.atptr->args[1];
+		alias.alname[i] = cmdtab.cmd[currcmd].atptr->args[0];
+		alias.alstr[i] = cmdtab.cmd[currcmd].atptr->args[1];
 		if( i == alias.used ){
 			++alias.used;
 		}
@@ -62,7 +68,7 @@ void set_alias(){
 
 void remove_alias(){
 	int i = 0;
-	while( i < alias.used && strcmp(command.atptr->args[0], alias.alname[i]) ){
+	while( i < alias.used && strcmp(cmdtab.cmd[currcmd].atptr->args[0], alias.alname[i]) ){
 		++i;
 	}
 	if( i >= alias.used ){
@@ -82,7 +88,7 @@ void remove_alias(){
 void execute_builtin(){
 	switch( builtin ){
 		case SETENV:
-			setenv(command.atptr->args[0], command.atptr->args[1], 1);
+			setenv(cmdtab.cmd[currcmd].atptr->args[0], cmdtab.cmd[currcmd].atptr->args[1], 1);
 			break;
 		case PRINTENV:
 			for(char **current = environ; *current; current++){
@@ -90,12 +96,12 @@ void execute_builtin(){
 			}
 			break;
 		case UNSETENV:
-			unsetenv(command.atptr->args[0]);
+			unsetenv(cmdtab.cmd[currcmd].atptr->args[0]);
 			break;
 		case CD:
 			break;
 		case ALIAS:
-			if(command.nargs == 0){
+			if(cmdtab.cmd[currcmd].nargs == 0){
 				list_aliases();
 			}
 			else{
@@ -115,8 +121,8 @@ void execute_command(){
     if (process > 0){
 			wait ((int *) 0);
     }else if (process == 0){
-   		command.atptr->args[0]= command.comname;
-    	execvp( command.comname,command.atptr->args );
+   		cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
+    	execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
     	fprintf (stderr, "Can't execute \n");
     	exit (1);
     }else if(process == -1){
@@ -127,9 +133,9 @@ void execute_command(){
 
 void clear_args(){
 	int i;
-	for (i = 0; i < command.nargs+1; ++i)
+	for (i = 0; i < cmdtab.cmd[currcmd].nargs+1; ++i)
 	{
-		command.atptr->args[i] = NULL;
+		cmdtab.cmd[currcmd].atptr->args[i] = NULL;
 	}
 }
 
@@ -180,9 +186,9 @@ void process_command(){
 	}
 	else{
 		//this if statement is for testing pipes
-		printf("calling : %s\n",command.comname );
-		if(strcmp(command.comname,"pipe") == 0){
-			printf("calling piped and sniped: %s\n",command.comname );
+		printf("calling : %s\n",cmdtab.cmd[currcmd].cmdname );
+		if(strcmp(cmdtab.cmd[currcmd].cmdname,"pipe") == 0){
+			printf("calling piped and sniped: %s\n",cmdtab.cmd[currcmd].cmdname );
 			piped_and_sniped();}
 		else{
 		execute_command();

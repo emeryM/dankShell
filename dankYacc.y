@@ -32,17 +32,17 @@ listFiles:
 			LS EOLN{
 				printf("no flag");
 				builtin = 0;
-				command.comname = "ls";
-				command.nargs = 0;
+				cmdtab.cmd[currcmd].cmdname = "ls";
+				cmdtab.cmd[currcmd].nargs = 0;
 
             }
 
 			|LS FLAG EOLN{
 				printf(" found flag %s",$2 );
 				builtin = 0;
-				command.comname = "ls";
-				command.atptr->args[1] = $2;
-				command.nargs = 1;
+				cmdtab.cmd[currcmd].cmdname = "ls";
+				cmdtab.cmd[currcmd].atptr->args[1] = $2;
+				cmdtab.cmd[currcmd].nargs = 1;
 
 			}
 
@@ -89,57 +89,57 @@ changeDir:
 			;
 setEnvVar:
 			SETENV WORD WORD EOLN{
-				command.comname = "setenv";
-				command.nargs = 2;
-				command.atptr->args[0] = $2;
-				command.atptr->args[1] = $3;
+				cmdtab.cmd[currcmd].cmdname = "setenv";
+				cmdtab.cmd[currcmd].nargs = 2;
+				cmdtab.cmd[currcmd].atptr->args[0] = $2;
+				cmdtab.cmd[currcmd].atptr->args[1] = $3;
 				builtin = SETENV;
 			}
 			|UNSETENV WORD EOLN{
-				command.comname = "unsetenv";
-				command.nargs = 1;
-				command.atptr->args[0] = $2;
+				cmdtab.cmd[currcmd].cmdname = "unsetenv";
+				cmdtab.cmd[currcmd].nargs = 1;
+				cmdtab.cmd[currcmd].atptr->args[0] = $2;
 				builtin = UNSETENV;
 			}
 			|PRINTENV EOLN{
-				command.comname = "printenv";
+				cmdtab.cmd[currcmd].cmdname = "printenv";
 				builtin = PRINTENV;
 			}
 			;
 setAlias:
 			ALIAS WORD QUOTED EOLN{
-				command.comname = "alias";
-				command.nargs = 2;
-				command.atptr->args[0] = $2;
+				cmdtab.cmd[currcmd].cmdname = "alias";
+				cmdtab.cmd[currcmd].nargs = 2;
+				cmdtab.cmd[currcmd].atptr->args[0] = $2;
 				char *q = $3;
 				char *new =q+1;
 				new[strlen(new)-1] = '\0';
-				command.atptr->args[1] = new;
+				cmdtab.cmd[currcmd].atptr->args[1] = new;
 				builtin = ALIAS;
 			}
 			|ALIAS WORD WORD EOLN{
-				command.comname = "alias";
-				command.nargs = 2;
-				command.atptr->args[0] = $2;
-				command.atptr->args[1] = $3;
+				cmdtab.cmd[currcmd].cmdname = "alias";
+				cmdtab.cmd[currcmd].nargs = 2;
+				cmdtab.cmd[currcmd].atptr->args[0] = $2;
+				cmdtab.cmd[currcmd].atptr->args[1] = $3;
 				builtin = ALIAS;
 			}
 			|ALIAS EOLN{
-				command.comname = "alias";
-				command.nargs = 0;
+				cmdtab.cmd[currcmd].cmdname = "alias";
+				cmdtab.cmd[currcmd].nargs = 0;
 				builtin = ALIAS;
 			}
 			|UNALIAS WORD EOLN{
-				command.comname = "unalias";
-				command.nargs = 1;
-				command.atptr->args[0] = $2;
+				cmdtab.cmd[currcmd].cmdname = "unalias";
+				cmdtab.cmd[currcmd].nargs = 1;
+				cmdtab.cmd[currcmd].atptr->args[0] = $2;
 				builtin = UNALIAS;
 			}
 			;
 piping:
 			PIPE EOLN{
 				printf("piping shit \n");
-				command.comname = "pipe";
+				cmdtab.cmd[currcmd].cmdname = "pipe";
 				builtin = 0;
 			}
 			;
