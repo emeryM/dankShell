@@ -21,6 +21,9 @@
 
 #define REGISTRY "REGISTRY"
 
+#define KGRN "\x1B[32m"
+#define KBLK "\x1B[0m"
+
 /* command line arguments structures */
 typedef struct comargs {
 	char *args[MAXARGS];
@@ -39,8 +42,8 @@ typedef struct com {
 /* alias structure */
 typedef struct alias {
 	int used;
-	char *alname;
-	char *alstr;
+	char *alname[MAXALIAS];
+	char *alstr[MAXALIAS];
 } ALIASTAB;
 
 /* cache table structure */

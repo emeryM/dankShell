@@ -41,6 +41,7 @@ unalias    return UNALIAS;
 
 [a-zA-Z]+  		yylval=strdup(yytext); return WORD;
 [a-zA-Z/.]+		yylval=strdup(yytext); return PATH;
+\"([^\\\"]|\\.)*\"				yylval=strdup(yytext); return QUOTED;
 
 [0-9]+     		yylval=strdup(yytext); return INTEGER;
 [0-9.]+    		yylval=strdup(yytext); return DECIMAL;
