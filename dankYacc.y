@@ -22,6 +22,7 @@ program:
 			| changeDir {return OK;}
 			| setEnvVar {return OK;}
 			| setAlias  {return OK;}
+			| piping    {return OK;}
 
 			;
 
@@ -131,6 +132,13 @@ setAlias:
 				command.nargs = 1;
 				command.atptr->args[0] = $2;
 				builtin = UNALIAS;
+			}
+			;
+piping:
+			PIPE EOLN{
+				printf("piping shit \n");
+				command.comname = "pipe";
+				builtin = 0;
 			}
 			;
 
