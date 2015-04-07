@@ -11,7 +11,7 @@ extern char* yylval;
 [ \t]+     { ; }
 
 bye        return EXIT;
-ls         return LS;
+
 cd         return CD;
 setenv     return SETENV;
 unsetenv   return UNSETENV;
@@ -39,7 +39,7 @@ unalias    return UNALIAS;
 "/"		   return ROOT;
 
 
-[a-zA-Z/.]+  		yylval=strdup(yytext); return WORD;
+[a-zA-Z/.\-]+  		yylval=strdup(yytext); return WORD;
 
 \"([^\\\"]|\\.)*\"				yylval=strdup(yytext); return QUOTED;
 
