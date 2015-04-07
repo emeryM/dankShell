@@ -56,5 +56,6 @@ CMDTAB cmdtab;
 ALIASTAB alias;
 extern char **environ;
 int builtin;
+int alias_detected;
 int currcmd; //current command
 int cmdcount; //number of commands
