@@ -3,11 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "dank.h"
-
 %}
 
 %token INTEGER DECIMAL
-%token WORD EOLN QUOTED
+%token WORD FLAG EOLN QUOTED
 %token CD EXIT SETENV HOME_PATH HOME ROOT
 %token PIPE QUOTE OPEN_CARAT CLOSE_CARAT BACKSLASH AMPERSAND PLUS SEMICOLON OPEN_PAREN CLOSE_PAREN TWO_PERIODS
 %token UNSETENV PRINTENV ALIAS UNALIAS
@@ -16,7 +15,6 @@
 program:
 
 			  goodbye 	{return OK;}
-			
 			| changeDir {return OK;}
 			| setEnvVar {return OK;}
 			| setAlias  {return OK;}
@@ -126,8 +124,24 @@ piping:
 				builtin = 0;
 			}
 			;
-commands:   
+commands:
 			WORD{
+
+				int i = 0;
+				while( i < alias.used && strcmp($1, alias.alname[i])){
+					printf("\nLooping");
+					++i;
+				}
+				if( i >= alias.used ){
+					printf("\nNo alias found");
+					alias_detected = 0;
+				}
+				else{
+					printf("\Alias found");
+					alias_detected = 1;
+					strcpy($1,alias.alstr[i]);
+				}
+				
 				printf("first thing");
 				cmdtab.cmd[currcmd].cmdname = $1;
 				cmdtab.cmd[currcmd].nargs = 0;
@@ -135,14 +149,14 @@ commands:
 				builtin = 0;
 			}
 			|commands WORD{
-				
+
 				cmdtab.cmd[currcmd].nargs++;
 				printf("we dem args, nargs: %d\n", cmdtab.cmd[currcmd].nargs);
 				printf("the arg is: %s\n",$2 );
 				cmdtab.cmd[currcmd].atptr->args[cmdtab.cmd[currcmd].nargs] = $2;
 			}
 			;
-			
+
 
 
 %%
