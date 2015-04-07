@@ -53,7 +53,7 @@ COMMAND command;
 ARGTAB argtab;
 ALIASTAB alias;
 CACHE cache;
-
+extern char **environ;
 int builtin;
 /*
 	builtin values
