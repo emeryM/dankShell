@@ -71,6 +71,31 @@ void execute_builtin(){
 
 void execute_command(){
 
+	//printf("in forkanexec\n");
+    int process = fork ();
+    /*
+    char * bin = "/bin/";
+
+   	char buf[512];
+    snprintf(buf, sizeof buf, "%s%s", bin, input);
+	*/
+
+    if (process > 0){             
+		wait ((int *) 0);      
+    }else if (process == 0){ 
+   	
+   		command.atptr->args[0]= command.comname;
+    	execvp( command.comname,command.atptr->args );
+                           
+    	fprintf (stderr, "Can't execute \n");
+    	exit (1);
+      
+    }else if(process == -1){
+
+    	fprintf (stderr, "Can't fork!\n");
+    	exit (2);
+    }
+
 }
 
 void process_command(){
@@ -79,6 +104,16 @@ void process_command(){
 	}
 	else{
 		execute_command();
+		clear_args();
+	}
+}
+
+void clear_args(){
+	//printf("clearing %d args\n" ,command.nargs);
+	int i;
+	for (i = 0; i < command.nargs+1; ++i)
+	{
+		command.atptr->args[i] = NULL;
 	}
 }
 

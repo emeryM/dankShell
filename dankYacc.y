@@ -21,18 +21,25 @@ program:
 			| listFiles {return OK;}
 			| changeDir {return OK;}
 			| setEnvVar {return OK;}
-			| setAlias {return OK;}
+			| setAlias  {return OK;}
 
 			;
 
 listFiles:
 			LS EOLN{
 				printf("no flag\n");
+				builtin = 0;
+				command.comname = "ls";
+				command.nargs = 0;
 
             }
 
 			|LS FLAG EOLN{
 				printf(" found flag %s\n",$2 );
+				builtin = 0;
+				command.comname = "ls";
+				command.atptr->args[1] = $2;
+				command.nargs = 1;
 
 			}
 
@@ -126,8 +133,3 @@ int yyerror(char *s){
 	fprintf(stderr, "*%s*\n", s);
 }
 
-char* mkstr( char* input ){
-	char *end = '\0';
-	strcat( input, end );
-	return input;
-}
