@@ -10,7 +10,8 @@
 #include "y.tab.h"
 
 void shell_init(){
-	for (int i = 0; i < MAXCMDS; ++i){
+	int i;
+	for (i= 0; i < MAXCMDS; ++i){
 		ARGTAB *args = malloc(sizeof(ARGTAB));
 		COMMAND cmd;// = malloc(sizeof(COMMAND));
 		cmd.atptr = args;
@@ -43,7 +44,8 @@ void list_aliases(){
 		printf("No aliases to display.");
 	}
 	else{
-		for(int i = 0; i < alias.used; ++i ){
+		int i;
+		for(i = 0; i < alias.used; ++i ){
 			printf("\n%s\t%s", alias.alname[i], alias.alstr[i]);
 		}
 	}
@@ -90,9 +92,11 @@ void execute_builtin(){
 		case SETENV:
 			setenv(cmdtab.cmd[currcmd].atptr->args[0], cmdtab.cmd[currcmd].atptr->args[1], 1);
 			break;
-		case PRINTENV:
-			for(char **current = environ; *current; current++){
+		case PRINTENV: ;
+		char **current = environ;
+			while(*current){
 				puts(*current);
+				 current++;
 			}
 			break;
 		case UNSETENV:

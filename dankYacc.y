@@ -8,7 +8,7 @@
 
 %token INTEGER DECIMAL
 %token WORD FLAG EOLN QUOTED
-%token LS CD EXIT SETENV HOME_PATH HOME ROOT
+%token CD EXIT SETENV HOME_PATH HOME ROOT
 %token PIPE QUOTE OPEN_CARAT CLOSE_CARAT BACKSLASH AMPERSAND PLUS SEMICOLON OPEN_PAREN CLOSE_PAREN TWO_PERIODS
 %token UNSETENV PRINTENV ALIAS UNALIAS
 
@@ -16,7 +16,7 @@
 program:
 
 			  goodbye 	{return OK;}
-			| listFiles {return OK;}
+			
 			| changeDir {return OK;}
 			| setEnvVar {return OK;}
 			| setAlias  {return OK;}
@@ -29,25 +29,7 @@ goodbye:
 				builtin = EXIT;
 			}
 			;
-listFiles:
-			LS EOLN{
-				printf("no flag");
-				builtin = 0;
-				cmdtab.cmd[currcmd].cmdname = "ls";
-				cmdtab.cmd[currcmd].nargs = 0;
 
-            }
-
-			|LS FLAG EOLN{
-				printf(" found flag %s",$2 );
-				builtin = 0;
-				cmdtab.cmd[currcmd].cmdname = "ls";
-				cmdtab.cmd[currcmd].atptr->args[1] = $2;
-				cmdtab.cmd[currcmd].nargs = 1;
-
-			}
-
-			;
 changeDir:
 			CD WORD EOLN{ printf(" change directory to %s ", $2);
 					chdir($2);
@@ -55,9 +37,6 @@ changeDir:
 			|CD HOME_PATH WORD EOLN{ printf(" change directory to %s ", $3);
 					chdir(getenv("HOME"));
 					chdir($3);
-				}
-			|CD WORD EOLN{ printf(" change directory to %s ", $2);
-					chdir($2);
 				}
 
 			|CD TWO_PERIODS WORD EOLN {printf(" change directory to %s ", $3);
@@ -139,7 +118,19 @@ piping:
 				builtin = 0;
 			}
 			;
-commands: WORD WORD WORD {};
+commands:   
+			WORD{
+				cmdtab.cmd[currcmd].cmdname = $1;
+				cmdtab.cmd[currcmd].nargs = 0;
+				cmdtab.cmd[currcmd].atptr->args[0] = $1;
+				builtin = 0;
+			}
+			|commands WORD{
+				cmdtab.cmd[currcmd].nargs++;
+				cmdtab.cmd[currcmd].atptr->args[cmdtab.cmd[currcmd].nargs] = $1;
+			}
+			;
+			
 
 
 %%

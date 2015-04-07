@@ -11,7 +11,7 @@ extern char* yylval;
 [ \t]+     { ; }
 
 bye        return EXIT;
-ls         return LS;
+
 cd         return CD;
 setenv     return SETENV;
 unsetenv   return UNSETENV;
