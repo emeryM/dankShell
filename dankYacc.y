@@ -166,7 +166,7 @@ commands:
 				
 			}
 			|commands WORD{
-
+ 
 				cmdtab.cmd[currcmd].nargs++;
 				printf("we dem args, nargs: %d\n", cmdtab.cmd[currcmd].nargs);
 				printf("the arg is: %s\n",$2 );
