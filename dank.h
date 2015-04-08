@@ -14,6 +14,7 @@
 #define MAXALIAS 100
 #define MAXPATH 50
 #define MAXPIPES 100
+#define MAXINPUTLENGTH 2048
 
 #define OK 0
 #define SYSERR 1
@@ -51,6 +52,7 @@ typedef struct cmdtab {
 /* alias structure */
 typedef struct alias {
 	int used;
+	char *reparse_string;
 	char *alname[MAXALIAS];
 	char *alstr[MAXALIAS];
 } ALIASTAB;
@@ -59,12 +61,17 @@ typedef struct pipetab{
 	int * pipes[MAXPIPES];
 }PIPETAB;
 
-PIPETAB pipeHolder;
+/* declare globals */
+
 CMDTAB cmdtab;
-ALIASTAB alias;
-extern char **environ;
-int builtin;
-int alias_detected;
 int currcmd; //current command
 int cmdcount; //number of commands
+int builtin;
+
+PIPETAB pipeHolder;
 int hasPipes;
+
+ALIASTAB alias;
+int alias_detected;
+
+extern char **environ;

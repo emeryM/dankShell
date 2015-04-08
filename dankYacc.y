@@ -156,7 +156,7 @@ commands:
 				dup2(cmdtab.cmd[currcmd].outfd, STDOUT_FILENO);
 			}
 			|commands WORD{
-
+ 
 				cmdtab.cmd[currcmd].nargs++;
 				printf("we dem args, nargs: %d\n", cmdtab.cmd[currcmd].nargs);
 				printf("the arg is: %s\n",$2 );

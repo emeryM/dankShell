@@ -6,9 +6,10 @@
 #include "dank.h"
 #include "y.tab.h"
 
-
+/* shell_init: initialize globals */
 void shell_init(){
 	int i;
+	//initialize command table and variables
 	for (i= 0; i < MAXCMDS; ++i){
 		ARGTAB *args = malloc(sizeof(ARGTAB));
 		COMMAND cmd;
@@ -19,18 +20,24 @@ void shell_init(){
 		cmd.atptr = args;
 		cmdtab.cmd[i] = cmd;
 	}
+	currcmd = 0;
+	cmdcount = 0;
+	builtin = 0;
+	//initialize pipe table and variables
 	for(i = 0; i < MAXPIPES; ++i){
 		int* arr = (int*)malloc(2 * sizeof(int));
 		pipeHolder.pipes[i] = arr;
 	}
-	alias.used = 0;
-	alias_detected = 0;
-	currcmd = 0;
-	cmdcount = 0;
 	hasPipes = 0;
-	builtin = 0;
+	//initialize alias table and variables
+	alias.used = 0;
+	char alstring[MAXINPUTLENGTH] = {0};
+	alias.reparse_string = alstring;
+	alias_detected = 0;
+	//initialize other variables
 }
 
+/* print_prompt: print prompt to shell */
 void print_prompt(){
 	printf(KGRN "\ndankShell:");
 	printf(KBLK " ");
@@ -172,7 +179,6 @@ void clear_args(){
 	cmdcount = 0;
 	alias_detected = 0;
 	builtin = 0;
-
 }
 
 void piped_and_sniped(){
@@ -288,7 +294,6 @@ void process_command(){
 		if( cmdtab.cmd[currcmd].outfd > -1 ){
 			// THIS IS WHERE TO CHANGE OUTPUT BACK TO NORMAL
 		}
-		printf("getting here 3");
 		clear_args();
 		}
 	}
@@ -305,7 +310,7 @@ int main( int argc, char* argv[] ) {
 		int CMD = get_command();
 		switch( CMD ){
 			case 0:
-				if( alias_detected > 0 ){
+				while( alias_detected > 0 ){
 					handle_aliases();
 				}
 				process_command();
