@@ -179,6 +179,7 @@ commands:
 
 				++hasPipes;
 				++currcmd;
+				++cmdcount;
 				cmdtab.cmd[currcmd].cmdname = $3;
 				cmdtab.cmd[currcmd].nargs = 0;
 				cmdtab.cmd[currcmd].atptr->args[0] = $3;
