@@ -36,7 +36,6 @@ typedef struct cmdargs {
 /* command structure */
 typedef struct cmd {
 	char	*cmdname;
-	int remote;
 	int infd;
 	int outfd;
 	int nargs;
