@@ -127,8 +127,6 @@ piping:
 commands:
 			WORD{
 
-				
-
 
 				int i = 0;
 				while( i < alias.used && strcmp($1, alias.alname[i])){
@@ -144,7 +142,7 @@ commands:
 					alias_detected = 1;
 					strcpy($1,alias.alstr[i]);
 				}
-				
+
 				printf("first thing cmmand name is: %s\n", $1);
 
 				cmdtab.cmd[currcmd].cmdname = $1;
@@ -160,7 +158,24 @@ commands:
 				cmdtab.cmd[currcmd].atptr->args[cmdtab.cmd[currcmd].nargs] = $2;
 			}
 			|commands PIPE WORD{
-				printf("after pipe cammand name is : %s\n", $3);
+				printf("after pipe command name is : %s\n", $3);
+
+				int i = 0;
+				while( i < alias.used && strcmp($3, alias.alname[i])){
+					printf("\nLooping");
+					++i;
+				}
+				if( i >= alias.used ){
+					printf("\nNo alias found");
+					alias_detected = 0;
+				}
+				else{
+					printf("\nAlias found");
+					alias_detected = 1;
+					strcpy($3,alias.alstr[i]);
+				}
+
+				printf("Command is %s \n", $3);
 
 				++hasPipes;
 				++currcmd;
