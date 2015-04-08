@@ -17,11 +17,21 @@ void shell_init(){
 		cmd.atptr = args;
 		cmdtab.cmd[i] = cmd;
 	}
+	for(i = 0; i < MAXPIPES; ++i){
+		int* arr = (int*)malloc(2 * sizeof(int));
+		pipeHolder.pipes[i] = arr;
+	}
 	alias.used = 0;
 	alias_detected = 0;
 	currcmd = 0;
 	cmdcount = 0;
 	hasPipes = 0;
+
+
+	pipeHolder.pipes[0][0] = 3;
+	pipeHolder.pipes[7][0] = 7;
+	printf("%d \n", pipeHolder.pipes[0][0] );
+	printf("%d \n", pipeHolder.pipes[7][0] );
 }
 
 void print_prompt(){
@@ -153,19 +163,27 @@ void piped_and_sniped(){
 
 		//temp 
 		currcmd = 0;
+		//int pipeHolder[100][2];
 
 		//do maht here to set the size of the des_p array
-		int num_pipes = 2;//set it
-	    int des_p[num_pipes];// array of pid's for pipe destinations
-        if(pipe(des_p) == -1) {
+		int num_pipes = hasPipes;//set it
+	   // int des_p[2];// array of pid's for pipe destinations
+	    int p;
+	    for(p=0; p < num_pipes; ++p){
+	    	if(pipe(pipeHolder.pipes[p]) == -1) {
+         		perror("Pipe failed");
+          		exit(1);
+        	}
+	    }
+        /*if(pipe(des_p) == -1) {
           perror("Pipe failed");
           exit(1);
-        }
+        }*/
         int i = 0;
-        currcmd = -1;
+      
        // hasPipes+=1;
-        while (hasPipes >= 0){
-        	++currcmd;
+        while (i  <= num_pipes){
+        	
         	printf("cmd value is: %d\n", currcmd );
 
         	if(fork() == 0)        //first fork
@@ -173,15 +191,37 @@ void piped_and_sniped(){
         		
         		printf("pipe value is: %d\n", hasPipes);
         		printf("cmd value is: %d\n", currcmd );
-	            close(hasPipes);          //closing stdout
-	            dup(des_p[hasPipes]);     //replacing stdout with pipe write
-	          
+        		if(i == 0){
+        			printf("first fork\n");
+        			close(1);
+        			dup(pipeHolder.pipes[i][1]); 
+        		}else if(i == num_pipes){
+        			printf("last fork\n");
+	           	 	close(0);          //closing stdout
+	            	dup(pipeHolder.pipes[i-1][0]);
+	        	}else{
+	        		printf("middle fork\n");
+	            	//close(1);
+	            	//close(0);
+	        		//dup(pipeHolder.pipes[i][1]);     //replacing stdout with pipe write
+	          		//dup(pipeHolder.pipes[i-1][0]); 
+	          		dup2(pipeHolder.pipes[i-1][0], STDIN_FILENO);
+	          		dup2(pipeHolder.pipes[i][1], STDOUT_FILENO);
+	          		
+	            }
+	            
 	            //close(des_p[0]);   //closing pipe read
 	            //close(des_p[1]);
 	            int k;
-	            for(k=0; k<2; k++)
-	        		{close(des_p[k]);//close(bc[i]); close(ca[i]); }
+	            int j;
+	            for(j=0; j < 2; ++j){
+		            for(k=0; k < num_pipes ; ++k){
+		            	close(pipeHolder.pipes[k][j]);
+		            }
 	        	}
+	            /*for(k=0; k<2; k++)
+	        		{close(des_p[k]);//close(bc[i]); close(ca[i]); }
+	        	}*/
 	        	
 
 	            //const char* prog1[] = { "ls", "-l", 0};
@@ -191,51 +231,19 @@ void piped_and_sniped(){
 	            perror("execvp of ls failed");
 	            exit(1);
 	        }
+	        ++i;
+	        ++currcmd;
 	        --hasPipes;
         }
-	       /*  if(fork() == 0)        //creating 2nd child
-        {
-            close(0);          //closing stdin
-            dup(des_p[0]);     //replacing stdin with pipe read
-            close(des_p[1]);   //closing pipe write
-            close(des_p[0]);
-
-            currcmd++;
-             cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
-    			execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
-            perror("execvp of wc failed");
-            exit(1);
-        }*/
-        //attempt for pipes is above
-        /*
-        if(fork() == 0)        //first fork
-        {
-            close(1);          //closing stdout
-            dup(des_p[1]);     //replacing stdout with pipe write
-            close(des_p[0]);   //closing pipe read
-            close(des_p[1]);
-
-            const char* prog1[] = { "ls", "-l", 0};
-            execvp(prog1[0], prog1);
-            perror("execvp of ls failed");
-            exit(1);
-        }
-
-        if(fork() == 0)        //creating 2nd child
-        {
-            close(0);          //closing stdin
-            dup(des_p[0]);     //replacing stdin with pipe read
-            close(des_p[1]);   //closing pipe write
-            close(des_p[0]);
-
-            const char* prog2[] = { "wc", "-l", 0};
-            execvp(prog2[0], prog2);
-            perror("execvp of wc failed");
-            exit(1);
-        }
-*/
-        close(des_p[0]);
-        close(des_p[1]);
+	   
+       // close(des_p[0]);
+        //close(des_p[1]);
+        int k, j;
+        for(j=0; j < 2; ++j){
+		            for(k=0; k < num_pipes ; ++k){
+		            	close(pipeHolder.pipes[k][j]);
+		            }
+	        	}
         wait(0);
         wait(0);
 
