@@ -153,6 +153,7 @@ commands:
 			|commands CLOSE_CARAT WORD{
 				printf("Yacc detected file output redirect");
 				cmdtab.cmd[currcmd].outfd = open($3, O_WRONLY | O_APPEND | O_CREAT,0755);
+				dup2(cmdtab.cmd[currcmd].outfd, STDOUT_FILENO);
 			}
 			|commands WORD{
 

@@ -6,11 +6,16 @@
 #include "dank.h"
 #include "y.tab.h"
 
+
 void shell_init(){
 	int i;
 	for (i= 0; i < MAXCMDS; ++i){
 		ARGTAB *args = malloc(sizeof(ARGTAB));
 		COMMAND cmd;
+		cmd.cmdname = NULL;
+		cmd.infd = -1;
+		cmd.outfd = -1;
+		cmd.nargs = 0;
 		cmd.atptr = args;
 		cmdtab.cmd[i] = cmd;
 	}
@@ -23,6 +28,7 @@ void shell_init(){
 	currcmd = 0;
 	cmdcount = 0;
 	hasPipes = 0;
+	builtin = 0;
 }
 
 void print_prompt(){
@@ -40,6 +46,10 @@ int get_command(){
 		}
 		return 0;
 	}
+}
+
+void handle_aliases(){
+
 }
 
 void list_aliases(){
@@ -151,14 +161,17 @@ void clear_args(){
 		{
 			cmdtab.cmd[currcmd].atptr->args[i] = NULL;
 		}
+
 		cmdtab.cmd[currcmd].nargs = 0;
-		cmdtab.cmd[currcmd].infd = 0;
-		cmdtab.cmd[currcmd].outfd = 0;
+		cmdtab.cmd[currcmd].infd = -1;
+		cmdtab.cmd[currcmd].outfd = 01;
 		cmdtab.cmd[currcmd].cmdname = NULL;
 	}
 	currcmd = 0;
 	hasPipes = 0;
 	cmdcount = 0;
+	alias_detected = 0;
+	builtin = 0;
 
 }
 
@@ -239,6 +252,7 @@ void process_command(){
 	else{
 		//this if statement is for testing pipes
 		printf("calling : %s\n",cmdtab.cmd[currcmd].cmdname );
+
 		if(hasPipes > 0){
 			printf("calling piped and sniped: %s\n",cmdtab.cmd[currcmd].cmdname );
 			piped_and_sniped();
@@ -246,6 +260,9 @@ void process_command(){
 		}
 		else{
 		execute_command();
+		if( cmdtab.cmd[currcmd].outfd > -1 ){
+			close(cmdtab.cmd[currcmd].outfd);
+		}
 		clear_args();
 		}
 	}
@@ -262,6 +279,9 @@ int main( int argc, char* argv[] ) {
 		int CMD = get_command();
 		switch( CMD ){
 			case 0:
+				if( alias_detected > 0 ){
+					handle_aliases();
+				}
 				process_command();
 				break;
 			case 1:
