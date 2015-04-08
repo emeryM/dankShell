@@ -286,8 +286,9 @@ void process_command(){
 		else{
 		execute_command();
 		if( cmdtab.cmd[currcmd].outfd > -1 ){
-			close(cmdtab.cmd[currcmd].outfd);
+			// THIS IS WHERE TO CHANGE OUTPUT BACK TO NORMAL
 		}
+		printf("getting here 3");
 		clear_args();
 		}
 	}
