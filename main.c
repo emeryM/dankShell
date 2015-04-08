@@ -151,12 +151,19 @@ void execute_command(){
 
 void clear_args(){
 	int i;
-	for (i = 0; i < cmdtab.cmd[currcmd].nargs+1; ++i)
-	{
-		cmdtab.cmd[currcmd].atptr->args[i] = NULL;
+	int j;
+	
+	for(currcmd = 0; currcmd <= cmdcount; ++currcmd){
+		//printf("clearing: %s\n",cmdtab.cmd[currcmd].cmdname);
+		for (i = 0; i < cmdtab.cmd[currcmd].nargs+1; ++i)
+		{
+			cmdtab.cmd[currcmd].atptr->args[i] = NULL;
+		}
 	}
 	currcmd = 0;
 	hasPipes = 0;
+	cmdcount = 0;
+	
 }
 
 void piped_and_sniped(){
@@ -207,7 +214,7 @@ void piped_and_sniped(){
 	          		//dup(pipeHolder.pipes[i-1][0]); 
 	          		dup2(pipeHolder.pipes[i-1][0], STDIN_FILENO);
 	          		dup2(pipeHolder.pipes[i][1], STDOUT_FILENO);
-	          		
+
 	            }
 	            
 	            //close(des_p[0]);   //closing pipe read
@@ -260,7 +267,9 @@ void process_command(){
 		printf("calling : %s\n",cmdtab.cmd[currcmd].cmdname );
 		if(hasPipes > 0){
 			printf("calling piped and sniped: %s\n",cmdtab.cmd[currcmd].cmdname );
-			piped_and_sniped();}
+			piped_and_sniped();
+			clear_args();
+		}
 		else{
 		execute_command();
 		clear_args();
