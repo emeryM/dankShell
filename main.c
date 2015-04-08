@@ -132,6 +132,33 @@ void execute_builtin(){
 			break;
 	}
 }
+void execute_command_redir(){
+    int process = fork ();
+    if (process > 0){
+			wait ((int *) 0);
+    }else if (process == 0){
+
+    	if(cmdtab.cmd[currcmd].errfd > -1 ){
+			dup2(cmdtab.cmd[currcmd].errfd, STDOUT_FILENO);
+			close(cmdtab.cmd[currcmd].errfd);
+		}
+    	
+		if(cmdtab.cmd[currcmd].outfd > -1 ){
+			dup2(cmdtab.cmd[currcmd].outfd, STDOUT_FILENO);
+			close(cmdtab.cmd[currcmd].outfd);
+		}
+
+   		cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
+    	execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
+    	fprintf (stderr, "Can't execute \n");
+    	exit (1);
+    }else if(process == -1){
+    	fprintf (stderr, "Can't fork!\n");
+    	exit (2);
+    }else{
+    	printf("Syntax Error\n");
+    }
+}
 
 void execute_command(){
     int process = fork ();
@@ -203,7 +230,16 @@ void piped_and_sniped(){
         			dup(pipeHolder.pipes[i][1]);
         		}else if(i == num_pipes){
         			//printf("last fork\n");
-        			//file redirection here
+        			if(cmdtab.cmd[currcmd].errfd > -1 ){
+						dup2(cmdtab.cmd[currcmd].errfd, STDERR_FILENO);
+						
+					}
+			    	
+					if(cmdtab.cmd[currcmd].outfd > -1 ){
+						dup2(cmdtab.cmd[currcmd].outfd, STDOUT_FILENO);
+						close(cmdtab.cmd[currcmd].outfd);
+					}
+
 	           	 	close(0);          //closing stdout
 	            	dup(pipeHolder.pipes[i-1][0]);
 	        	}else{
@@ -223,7 +259,8 @@ void piped_and_sniped(){
 	        	//execute commands
 	            cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
     			execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
-	            perror("execvp of ls failed");
+	            perror("execvp failed");
+	            close(cmdtab.cmd[currcmd].errfd);
 	            exit(1);
 	        }
 	        ++i;
@@ -257,12 +294,15 @@ void process_command(){
 			printf("calling piped and sniped: %s\n",cmdtab.cmd[currcmd].cmdname );
 			piped_and_sniped();
 			clear_args();
+		}else if (cmdtab.cmd[currcmd].outfd > -1 ){
+			printf("attempting to close file redirect\n");
+			execute_command_redir();
+		}else if (cmdtab.cmd[currcmd].errfd > -1 ){
+			printf("attempting to close err redirect\n");
+			execute_command_redir();
 		}
 		else{
 		execute_command();
-		if( cmdtab.cmd[currcmd].outfd > -1 ){
-			// THIS IS WHERE TO CHANGE OUTPUT BACK TO NORMAL
-		}
 		printf("getting here 3");
 		clear_args();
 		}

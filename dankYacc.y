@@ -8,7 +8,7 @@
 %token INTEGER DECIMAL
 %token WORD FLAG EOLN QUOTED
 %token CD EXIT SETENV HOME_PATH HOME ROOT
-%token PIPE QUOTE OPEN_CARAT CLOSE_CARAT BACKSLASH AMPERSAND PLUS SEMICOLON OPEN_PAREN CLOSE_PAREN TWO_PERIODS
+%token PIPE QUOTE OPEN_CARET CLOSE_CARET DBL_CLOSE_CARET ERROR_CARET BACKSLASH AMPERSAND PLUS SEMICOLON OPEN_PAREN CLOSE_PAREN TWO_PERIODS
 %token UNSETENV PRINTENV ALIAS UNALIAS
 
 %%
@@ -150,10 +150,20 @@ commands:
 				cmdtab.cmd[currcmd].atptr->args[0] = $1;
 				builtin = 0;
 			}
-			|commands CLOSE_CARAT WORD{
+			|commands CLOSE_CARET WORD{
+				printf("Yacc detected file output redirect");
+				cmdtab.cmd[currcmd].outfd = open($3, O_WRONLY | O_CREAT ,0755);
+
+			}
+			|commands DBL_CLOSE_CARET WORD{
 				printf("Yacc detected file output redirect");
 				cmdtab.cmd[currcmd].outfd = open($3, O_WRONLY | O_APPEND | O_CREAT,0755);
-				dup2(cmdtab.cmd[currcmd].outfd, STDOUT_FILENO);
+				
+			}
+			|commands ERROR_CARET WORD{
+				printf("Yacc detected file error redirect");
+				cmdtab.cmd[currcmd].errfd = open($3, O_WRONLY | O_APPEND | O_CREAT,0755);
+				
 			}
 			|commands WORD{
 
