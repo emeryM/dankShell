@@ -5,6 +5,9 @@
 
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <fcntl.h>
 
 #define MAXCMDS 50
 #define MAXARGS 100
@@ -66,5 +69,3 @@ int alias_detected;
 int currcmd; //current command
 int cmdcount; //number of commands
 int hasPipes;
-
-

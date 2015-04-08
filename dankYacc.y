@@ -12,7 +12,7 @@
 %token UNSETENV PRINTENV ALIAS UNALIAS
 
 %%
-program: 
+program:
 
 			  goodbye 	{return OK;}
 			| changeDir {return OK;}
@@ -149,6 +149,10 @@ commands:
 				cmdtab.cmd[currcmd].nargs = 0;
 				cmdtab.cmd[currcmd].atptr->args[0] = $1;
 				builtin = 0;
+			}
+			|commands CLOSE_CARAT WORD{
+				printf("Yacc detected file output redirect");
+				cmdtab.cmd[currcmd].outfd = open($3, O_WRONLY | O_APPEND | O_CREAT,0755);
 			}
 			|commands WORD{
 

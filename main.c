@@ -3,9 +3,6 @@
  *-------------------------------------------------------------------
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-
 #include "dank.h"
 #include "y.tab.h"
 
@@ -26,12 +23,6 @@ void shell_init(){
 	currcmd = 0;
 	cmdcount = 0;
 	hasPipes = 0;
-
-
-	pipeHolder.pipes[0][0] = 3;
-	pipeHolder.pipes[7][0] = 7;
-	printf("%d \n", pipeHolder.pipes[0][0] );
-	printf("%d \n", pipeHolder.pipes[7][0] );
 }
 
 void print_prompt(){
@@ -149,26 +140,31 @@ void execute_command(){
     }
 }
 
+
 void clear_args(){
 	int i;
 	int j;
-	
+
 	for(currcmd = 0; currcmd <= cmdcount; ++currcmd){
 		//printf("clearing: %s\n",cmdtab.cmd[currcmd].cmdname);
 		for (i = 0; i < cmdtab.cmd[currcmd].nargs+1; ++i)
 		{
 			cmdtab.cmd[currcmd].atptr->args[i] = NULL;
 		}
+		cmdtab.cmd[currcmd].nargs = 0;
+		cmdtab.cmd[currcmd].infd = 0;
+		cmdtab.cmd[currcmd].outfd = 0;
+		cmdtab.cmd[currcmd].cmdname = NULL;
 	}
 	currcmd = 0;
 	hasPipes = 0;
 	cmdcount = 0;
-	
+
 }
 
 void piped_and_sniped(){
 
-		//temp 
+		//temp
 		currcmd = 0;
 		//int pipeHolder[100][2];
 
@@ -187,21 +183,21 @@ void piped_and_sniped(){
           exit(1);
         }*/
         int i = 0;
-      
+
        // hasPipes+=1;
         while (i  <= num_pipes){
-        	
+
         	printf("cmd value is: %d\n", currcmd );
 
         	if(fork() == 0)        //first fork
         	{
-        		
+
         		printf("pipe value is: %d\n", hasPipes);
         		printf("cmd value is: %d\n", currcmd );
         		if(i == 0){
         			printf("first fork\n");
         			close(1);
-        			dup(pipeHolder.pipes[i][1]); 
+        			dup(pipeHolder.pipes[i][1]);
         		}else if(i == num_pipes){
         			printf("last fork\n");
 	           	 	close(0);          //closing stdout
@@ -211,12 +207,12 @@ void piped_and_sniped(){
 	            	//close(1);
 	            	//close(0);
 	        		//dup(pipeHolder.pipes[i][1]);     //replacing stdout with pipe write
-	          		//dup(pipeHolder.pipes[i-1][0]); 
+	          		//dup(pipeHolder.pipes[i-1][0]);
 	          		dup2(pipeHolder.pipes[i-1][0], STDIN_FILENO);
 	          		dup2(pipeHolder.pipes[i][1], STDOUT_FILENO);
 
 	            }
-	            
+
 	            //close(des_p[0]);   //closing pipe read
 	            //close(des_p[1]);
 	            int k;
@@ -229,7 +225,7 @@ void piped_and_sniped(){
 	            /*for(k=0; k<2; k++)
 	        		{close(des_p[k]);//close(bc[i]); close(ca[i]); }
 	        	}*/
-	        	
+
 
 	            //const char* prog1[] = { "ls", "-l", 0};
 	            //execvp(prog1[0], prog1);
@@ -242,7 +238,7 @@ void piped_and_sniped(){
 	        ++currcmd;
 	        --hasPipes;
         }
-	   
+
        // close(des_p[0]);
         //close(des_p[1]);
         int k, j;
@@ -251,8 +247,11 @@ void piped_and_sniped(){
 		            	close(pipeHolder.pipes[k][j]);
 		            }
 	        	}
-        wait(0);
-        wait(0);
+
+				for(j=0; j <= num_pipes; ++j){
+					wait(0);
+				}
+
 
 
 }
