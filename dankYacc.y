@@ -12,7 +12,7 @@
 %token UNSETENV PRINTENV ALIAS UNALIAS
 
 %%
-program:
+program: 
 
 			  goodbye 	{return OK;}
 			| changeDir {return OK;}
