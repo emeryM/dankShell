@@ -20,6 +20,7 @@ program:
 			| setEnvVar {return OK;}
 			| setAlias  {return OK;}
 			| piping    {return OK;}
+			| blank	    {return OK;}
 			| commands  {
 					if( loop_detected > 0 ){
 						yyrestart(stdin);
@@ -172,6 +173,15 @@ piping:
 			}
 			;
 
+blank:
+				EOLN {
+					cmdtab.cmd[currcmd].cmdname = "false";
+					cmdtab.cmd[currcmd].nargs = 0;
+					cmdtab.cmd[currcmd].atptr->args[0] = $1;
+					builtin = 0;
+			}
+			;
+
 commands:
 			  WORD {
 					int i = 0;
@@ -195,15 +205,12 @@ commands:
 					builtin = 0;
 			}
 			| commands CLOSE_CARET WORD {
-					printf("Yacc detected file output redirect");
 					cmdtab.cmd[currcmd].outfd = open($3, O_WRONLY | O_CREAT ,0755);
 			}
 			| commands DBL_CLOSE_CARET WORD {
-					printf("Yacc detected file output redirect");
 					cmdtab.cmd[currcmd].outfd = open($3, O_WRONLY | O_APPEND | O_CREAT,0755);
 			}
 			| commands ERROR_CARET WORD {
-					printf("Yacc detected file error redirect");
 					cmdtab.cmd[currcmd].errfd = open($3, O_WRONLY | O_APPEND | O_CREAT,0755);
 			}
 			| commands WORD {

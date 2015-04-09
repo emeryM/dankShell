@@ -46,7 +46,7 @@ typedef struct alias {
 	char *reparse_string;
 	char *alname[MAXALIAS];
 	char *alstr[MAXALIAS];
-	int *found[MAXALIAS];
+	int found[MAXALIAS];
 } ALIASTAB;
 
 typedef struct pipetab{
