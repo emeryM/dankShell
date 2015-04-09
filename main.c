@@ -43,6 +43,32 @@ void print_prompt(){
 	printf(KBLK " ");
 }
 
+
+void clear_args(){
+	int i;
+	int j;
+	//clear command table and variables
+	for(currcmd = 0; currcmd <= cmdcount; ++currcmd){
+		cmdtab.cmd[currcmd].cmdname = NULL;
+		cmdtab.cmd[currcmd].infd = -1;
+		cmdtab.cmd[currcmd].outfd = -1;
+		for (i = 0; i < cmdtab.cmd[currcmd].nargs+1; ++i)
+		{
+			cmdtab.cmd[currcmd].atptr->args[i] = NULL;
+		}
+		cmdtab.cmd[currcmd].nargs = 0;
+	}
+	currcmd = 0;
+	cmdcount = 0;
+	builtin = 0;
+	//clear pipe variables
+	hasPipes = 0;
+	//clear alias variables
+	alias_detected = 0;
+	memset(alias.reparse_string,0,strlen(alias.reparse_string));
+	builtin = 0;
+}
+
 int get_command(){
 	if( yyparse() ){
 		return 1;
@@ -53,10 +79,6 @@ int get_command(){
 		}
 		return 0;
 	}
-}
-
-void handle_aliases(){
-
 }
 
 void list_aliases(){
@@ -155,30 +177,6 @@ void execute_command(){
     }else{
     	printf("Syntax Error\n");
     }
-}
-
-
-void clear_args(){
-	int i;
-	int j;
-
-	for(currcmd = 0; currcmd <= cmdcount; ++currcmd){
-		//printf("clearing: %s\n",cmdtab.cmd[currcmd].cmdname);
-		for (i = 0; i < cmdtab.cmd[currcmd].nargs+1; ++i)
-		{
-			cmdtab.cmd[currcmd].atptr->args[i] = NULL;
-		}
-
-		cmdtab.cmd[currcmd].nargs = 0;
-		cmdtab.cmd[currcmd].infd = -1;
-		cmdtab.cmd[currcmd].outfd = 01;
-		cmdtab.cmd[currcmd].cmdname = NULL;
-	}
-	currcmd = 0;
-	hasPipes = 0;
-	cmdcount = 0;
-	alias_detected = 0;
-	builtin = 0;
 }
 
 void piped_and_sniped(){
@@ -310,9 +308,6 @@ int main( int argc, char* argv[] ) {
 		int CMD = get_command();
 		switch( CMD ){
 			case 0:
-				while( alias_detected > 0 ){
-					handle_aliases();
-				}
 				process_command();
 				break;
 			case 1:
@@ -321,6 +316,12 @@ int main( int argc, char* argv[] ) {
 			case 2:
 				printf("%s\n", "Smoke weed erry day...");
 				exit( EXIT_SUCCESS );
+				break;
+			case 570:
+				clear_args();
+				printf("%s\n", "Boogers");
+				yyparse();
+				process_command();
 				break;
 			default:
 				printf("%c ", CMD);

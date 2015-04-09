@@ -19,7 +19,42 @@ program:
 			| setEnvVar {return OK;}
 			| setAlias  {return OK;}
 			| piping    {return OK;}
-			| commands  {return OK;}
+			| commands  {
+				if( alias_detected > 0 ){
+					alias_detected = 0;
+					int i;
+					int j;
+					for( j = 0; j <= currcmd; ++j){
+						for( i = 0; i <= cmdtab.cmd[j].nargs; ++i ){
+							strncat(
+								alias.reparse_string,
+								cmdtab.cmd[j].atptr->args[i],
+								MAXINPUTLENGTH-strlen(alias.reparse_string)
+							);
+							strncat(
+								alias.reparse_string,
+								" ",
+								MAXINPUTLENGTH-strlen(alias.reparse_string)
+							);
+						}
+						if( hasPipes > 0 && j != currcmd ){
+							strncat(
+								alias.reparse_string,
+								"| ",
+								MAXINPUTLENGTH-strlen(alias.reparse_string)
+							);
+						}
+					}
+					printf("\nThe expanded command is: %s\n", alias.reparse_string);
+					yy_scan_string(alias.reparse_string);
+
+					return 570;
+				}
+				else{
+					yyrestart(stdin);
+					return OK;
+				}
+				}
 
 			;
 goodbye:
@@ -130,16 +165,10 @@ commands:
 
 				int i = 0;
 				while( i < alias.used && strcmp($1, alias.alname[i])){
-					printf("\nLooping");
 					++i;
 				}
-				if( i >= alias.used ){
-					printf("\nNo alias found");
-					alias_detected = 0;
-				}
-				else{
-					printf("\nAlias found");
-					alias_detected = 1;
+				if( i < alias.used ){
+					alias_detected++;
 					strcpy($1,alias.alstr[i]);
 				}
 
@@ -156,7 +185,7 @@ commands:
 				dup2(cmdtab.cmd[currcmd].outfd, STDOUT_FILENO);
 			}
 			|commands WORD{
- 
+
 				cmdtab.cmd[currcmd].nargs++;
 				printf("we dem args, nargs: %d\n", cmdtab.cmd[currcmd].nargs);
 				printf("the arg is: %s\n",$2 );
@@ -172,11 +201,10 @@ commands:
 				}
 				if( i >= alias.used ){
 					printf("\nNo alias found");
-					alias_detected = 0;
 				}
 				else{
 					printf("\nAlias found");
-					alias_detected = 1;
+					alias_detected++;
 					strcpy($3,alias.alstr[i]);
 				}
 
@@ -200,4 +228,5 @@ commands:
 
 int yyerror(char *s){
 	fprintf(stderr, "*%s*\n", s);
+	return 1;
 }
