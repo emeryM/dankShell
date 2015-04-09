@@ -9,25 +9,16 @@
 #include <stdio.h>
 #include <fcntl.h>
 
-#define MAXCMDS 50
-#define MAXARGS 100
-#define MAXALIAS 100
-#define MAXPATH 50
-#define MAXPIPES 100
-#define MAXINPUTLENGTH 2048
+#define MAXCMDS 50						// maximum commands on one line of input
+#define MAXARGS 100						// maximum arguments for each command
+#define MAXALIAS 100					// maximum aliases in the shell
+#define MAXPIPES 100					// maximum pipes on one line of input
+#define MAXINPUTLENGTH 2048		// maximum number of characters on a line of input
 
 #define OK 0
-#define SYSERR 1
-#define ERRORS 2
-#define OLD_ERR 3
-#define SYSCALLER -1
 
-#define THE_ONLY_ONE 1
-#define FIRST 2
-#define LAST 3
-
-#define KGRN "\x1B[32m"
-#define KBLK "\x1B[0m"
+#define KGRN "\x1B[32m"				// shell prompt color
+#define KBLK "\x1B[0m"				// shell text color
 
 /* command arguments structures */
 typedef struct cmdargs {
@@ -55,6 +46,7 @@ typedef struct alias {
 	char *reparse_string;
 	char *alname[MAXALIAS];
 	char *alstr[MAXALIAS];
+	int *alparsed[MAXALIAS];
 } ALIASTAB;
 
 typedef struct pipetab{
@@ -63,15 +55,15 @@ typedef struct pipetab{
 
 /* declare globals */
 
-CMDTAB cmdtab;
-int currcmd; //current command
-int cmdcount; //number of commands
-int builtin;
+CMDTAB cmdtab;							// command table
+int currcmd; 								// current command being processed
+int cmdcount; 							// number of commands on a line of input
+int builtin;					 			// nonzero if command is builtin
 
-PIPETAB pipeHolder;
-int hasPipes;
+PIPETAB pipetab;						// pipetable
+int has_pipes;							// indicates number of pipes on a line of input
 
-ALIASTAB alias;
-int alias_detected;
+ALIASTAB alias;							// alias table
+int alias_detected;					// indicates presence of aliases on a line of input
 
-extern char **environ;
+extern char **environ;			// allows access to shell environment variables

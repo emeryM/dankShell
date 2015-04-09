@@ -37,7 +37,7 @@ program:
 								MAXINPUTLENGTH-strlen(alias.reparse_string)
 							);
 						}
-						if( hasPipes > 0 && j != currcmd ){
+						if( has_pipes > 0 && j != currcmd ){
 							strncat(
 								alias.reparse_string,
 								"| ",
@@ -172,8 +172,6 @@ commands:
 					strcpy($1,alias.alstr[i]);
 				}
 
-				printf("first thing cmmand name is: %s\n", $1);
-
 				cmdtab.cmd[currcmd].cmdname = $1;
 				cmdtab.cmd[currcmd].nargs = 0;
 				cmdtab.cmd[currcmd].atptr->args[0] = $1;
@@ -187,12 +185,12 @@ commands:
 			|commands DBL_CLOSE_CARET WORD{
 				printf("Yacc detected file output redirect");
 				cmdtab.cmd[currcmd].outfd = open($3, O_WRONLY | O_APPEND | O_CREAT,0755);
-				
+
 			}
 			|commands ERROR_CARET WORD{
 				printf("Yacc detected file error redirect");
 				cmdtab.cmd[currcmd].errfd = open($3, O_WRONLY | O_APPEND | O_CREAT,0755);
-				
+
 			}
 			|commands WORD{
 
@@ -220,7 +218,7 @@ commands:
 
 				printf("Command is %s \n", $3);
 
-				++hasPipes;
+				++has_pipes;
 				++currcmd;
 				++cmdcount;
 				cmdtab.cmd[currcmd].cmdname = $3;

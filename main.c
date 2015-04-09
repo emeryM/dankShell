@@ -3,10 +3,11 @@
  *-------------------------------------------------------------------
  */
 
+
 #include "dank.h"
 #include "y.tab.h"
 
-/* shell_init: initialize globals */
+
 void shell_init(){
 	int i;
 	//initialize command table and variables
@@ -26,18 +27,17 @@ void shell_init(){
 	//initialize pipe table and variables
 	for(i = 0; i < MAXPIPES; ++i){
 		int* arr = (int*)malloc(2 * sizeof(int));
-		pipeHolder.pipes[i] = arr;
+		pipetab.pipes[i] = arr;
 	}
-	hasPipes = 0;
+	has_pipes = 0;
 	//initialize alias table and variables
-	alias.used = 0;
 	char alstring[MAXINPUTLENGTH] = {0};
 	alias.reparse_string = alstring;
+	alias.used = 0;
 	alias_detected = 0;
-	//initialize other variables
 }
 
-/* print_prompt: print prompt to shell */
+
 void print_prompt(){
 	printf(KGRN "\ndankShell:");
 	printf(KBLK " ");
@@ -52,8 +52,7 @@ void clear_args(){
 		cmdtab.cmd[currcmd].cmdname = NULL;
 		cmdtab.cmd[currcmd].infd = -1;
 		cmdtab.cmd[currcmd].outfd = -1;
-		for (i = 0; i < cmdtab.cmd[currcmd].nargs+1; ++i)
-		{
+		for (i = 0; i < cmdtab.cmd[currcmd].nargs+1; ++i){
 			cmdtab.cmd[currcmd].atptr->args[i] = NULL;
 		}
 		cmdtab.cmd[currcmd].nargs = 0;
@@ -62,12 +61,13 @@ void clear_args(){
 	cmdcount = 0;
 	builtin = 0;
 	//clear pipe variables
-	hasPipes = 0;
+	has_pipes = 0;
 	//clear alias variables
 	alias_detected = 0;
 	memset(alias.reparse_string,0,strlen(alias.reparse_string));
 	builtin = 0;
 }
+
 
 int get_command(){
 	if( yyparse() ){
@@ -81,6 +81,7 @@ int get_command(){
 	}
 }
 
+
 void list_aliases(){
 	if( alias.used == 0 ){
 		printf("No aliases to display.");
@@ -92,6 +93,7 @@ void list_aliases(){
 		}
 	}
 }
+
 
 void set_alias(){
 	if (alias.used >= MAXALIAS){
@@ -109,6 +111,7 @@ void set_alias(){
 		}
 	}
 }
+
 
 void remove_alias(){
 	int i = 0;
@@ -129,13 +132,14 @@ void remove_alias(){
 	}
 }
 
+
 void execute_builtin(){
 	switch( builtin ){
 		case SETENV:
 			setenv(cmdtab.cmd[currcmd].atptr->args[0], cmdtab.cmd[currcmd].atptr->args[1], 1);
 			break;
 		case PRINTENV: ;
-		char **current = environ;
+			char **current = environ;
 			while(*current){
 				puts(*current);
 				 current++;
@@ -161,129 +165,136 @@ void execute_builtin(){
 			break;
 	}
 }
-void execute_command_redir(){
-    int process = fork ();
-    if (process > 0){
-			wait ((int *) 0);
-    }else if (process == 0){
 
-    	if(cmdtab.cmd[currcmd].errfd > -1 ){
+
+void execute_command_redir(){
+	int process = fork ();
+	if (process > 0){
+		wait ((int *) 0);
+	}
+	else if (process == 0){
+		if(cmdtab.cmd[currcmd].errfd > -1 ){
 			dup2(cmdtab.cmd[currcmd].errfd, STDOUT_FILENO);
 			close(cmdtab.cmd[currcmd].errfd);
 		}
-    	
 		if(cmdtab.cmd[currcmd].outfd > -1 ){
 			dup2(cmdtab.cmd[currcmd].outfd, STDOUT_FILENO);
 			close(cmdtab.cmd[currcmd].outfd);
 		}
-
-   		cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
-    	execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
-    	fprintf (stderr, "Can't execute \n");
-    	exit (1);
-    }else if(process == -1){
-    	fprintf (stderr, "Can't fork!\n");
-    	exit (2);
-    }else{
-    	printf("Syntax Error\n");
-    }
+		cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
+		execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
+		fprintf (stderr, "Can't execute \n");
+		exit (1);
+	}
+	else if(process == -1){
+		fprintf (stderr, "Can't fork!\n");
+		exit (2);
+	}
+	else{
+		printf("Syntax Error\n");
+	}
 }
+
 
 void execute_command(){
-    int process = fork ();
-    if (process > 0){
-			wait ((int *) 0);
-    }else if (process == 0){
-   		cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
-    	execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
-    	fprintf (stderr, "Can't execute \n");
-    	exit (1);
-    }else if(process == -1){
-    	fprintf (stderr, "Can't fork!\n");
-    	exit (2);
-    }else{
-    	printf("Syntax Error\n");
-    }
+	int process = fork ();
+	if (process > 0){
+		wait ((int *) 0);
+	}
+	else if (process == 0){
+		cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
+		execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
+		fprintf (stderr, "Can't execute \n");
+		exit (1);
+	}
+	else if(process == -1){
+		fprintf (stderr, "Can't fork!\n");
+		exit (2);
+	}
+	else{
+		printf("Syntax Error\n");
+	}
 }
+
 
 void piped_and_sniped(){
+	// begin with first command
+	currcmd = 0;
 
-		currcmd = 0;//set to first cmd
+	// detect number of pipes required
+	int num_pipes = has_pipes;
 
-		int num_pipes = hasPipes;//set number of pipes detected
-	    int p;
-	    for(p=0; p < num_pipes; ++p){ //create pipes
-	    	if(pipe(pipeHolder.pipes[p]) == -1) {
-         		perror("Pipe failed"); 
-          		exit(1);
-        	}
-	    }
+	//create necessary pipes
+	int p;
+	for(p=0; p < num_pipes; ++p){
+		if(pipe(pipetab.pipes[p]) == -1){
+			perror("Pipe failed");
+			exit(1);
+		}
+	}
 
-        int i = 0;
-        while (i  <= num_pipes){ //loop of pipe redirection
-
-        	//printf("cmd value is: %d\n", currcmd );
-
-        	if(fork() == 0)        // fork
-        	{
-        		//printf("pipe value is: %d\n", hasPipes);
-        		//printf("cmd value is: %d\n", currcmd );
-        		if(i == 0){
-        			//printf("first fork\n");
-        			close(1);
-        			dup(pipeHolder.pipes[i][1]);
-        		}else if(i == num_pipes){
-        			//printf("last fork\n");
-        			if(cmdtab.cmd[currcmd].errfd > -1 ){
-						dup2(cmdtab.cmd[currcmd].errfd, STDERR_FILENO);
-						
-					}
-			    	
-					if(cmdtab.cmd[currcmd].outfd > -1 ){
-						dup2(cmdtab.cmd[currcmd].outfd, STDOUT_FILENO);
-						close(cmdtab.cmd[currcmd].outfd);
-					}
-
-	           	 	close(0);          //closing stdout
-	            	dup(pipeHolder.pipes[i-1][0]);
-	        	}else{
-	        		//printf("middle fork\n");
-	          		dup2(pipeHolder.pipes[i-1][0], STDIN_FILENO);
-	          		dup2(pipeHolder.pipes[i][1], STDOUT_FILENO);
-
-	            }
-
-	            int k;
-	            int j;
-	            for(j=0; j < 2; ++j){
-		            for(k=0; k < num_pipes ; ++k){
-		            	close(pipeHolder.pipes[k][j]); //close pipes
-		            }
-	        	}
-	        	//execute commands
-	            cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
-    			execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
-	            perror("execvp failed");
-	            close(cmdtab.cmd[currcmd].errfd);
-	            exit(1);
-	        }
-	        ++i;
-	        ++currcmd;
-	        --hasPipes;
-        }
-
-        int k, j;
-        for(j=0; j < 2; ++j){
-		            for(k=0; k < num_pipes ; ++k){
-		            	close(pipeHolder.pipes[k][j]);
-		            }
-	        	}
-
-				for(j=0; j <= num_pipes; ++j){
-					wait(0);//wait after each fork
+	//loop pipe redirection
+	int i = 0;
+	while (i  <= num_pipes){
+		// fork
+		if(fork() == 0){
+			// special case: first fork
+			if(i == 0){
+				close(1);
+				dup(pipetab.pipes[i][1]);
+			}
+			// special case: last fork
+			else if(i == num_pipes){
+				if(cmdtab.cmd[currcmd].errfd > -1 ){
+					dup2(cmdtab.cmd[currcmd].errfd, STDERR_FILENO);
 				}
+				if(cmdtab.cmd[currcmd].outfd > -1 ){
+					dup2(cmdtab.cmd[currcmd].outfd, STDOUT_FILENO);
+					close(cmdtab.cmd[currcmd].outfd);
+				}
+				// closing stdout
+				close(0);
+				dup(pipetab.pipes[i-1][0]);
+			}
+			// case: any middle fork
+			else{
+				dup2(pipetab.pipes[i-1][0], STDIN_FILENO);
+				dup2(pipetab.pipes[i][1], STDOUT_FILENO);
+			}
+			// close
+			int k;
+			int j;
+			for(j=0; j < 2; ++j){
+				for(k=0; k < num_pipes ; ++k){
+					close(pipetab.pipes[k][j]);
+				}
+			}
+			//execute command
+			cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
+			execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
+			perror("execvp failed");
+			close(cmdtab.cmd[currcmd].errfd);
+			exit(1);
+		}
+		++i;
+		++currcmd;
+		--has_pipes;
+	}
 
+	// close pipes
+	int k, j;
+	for(j=0; j < 2; ++j){
+		for(k=0; k < num_pipes ; ++k){
+			close(pipetab.pipes[k][j]);
+		}
+	}
+
+	// wait once per pipe
+	for(j=0; j <= num_pipes; ++j){
+		wait(0);
+	}
 }
+
 
 void process_command(){
 	if ( builtin ){
@@ -294,7 +305,7 @@ void process_command(){
 		//this if statement is for testing pipes
 		printf("calling : %s\n",cmdtab.cmd[currcmd].cmdname );
 
-		if(hasPipes > 0){
+		if(has_pipes > 0){
 			printf("calling piped and sniped: %s\n",cmdtab.cmd[currcmd].cmdname );
 			piped_and_sniped();
 			clear_args();
@@ -314,9 +325,11 @@ void process_command(){
 	}
 }
 
+
 void recover_from_errors(){
 
 }
+
 
 int main( int argc, char* argv[] ) {
 	shell_init();
