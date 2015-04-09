@@ -42,11 +42,11 @@ typedef struct cmdtab {
 
 /* alias structure */
 typedef struct alias {
-	int used;
+	int  used;
 	char *reparse_string;
 	char *alname[MAXALIAS];
 	char *alstr[MAXALIAS];
-	int *alparsed[MAXALIAS];
+	int *found[MAXALIAS];
 } ALIASTAB;
 
 typedef struct pipetab{
@@ -65,5 +65,6 @@ int has_pipes;							// indicates number of pipes on a line of input
 
 ALIASTAB alias;							// alias table
 int alias_detected;					// indicates presence of aliases on a line of input
+int loop_detected;					// infinite alias loop detected
 
 extern char **environ;			// allows access to shell environment variables

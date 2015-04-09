@@ -20,7 +20,11 @@ program:
 			| setAlias  {return OK;}
 			| piping    {return OK;}
 			| commands  {
-				if( alias_detected > 0 ){
+				if( loop_detected > 0 ){
+					yyrestart(stdin);
+					YYACCEPT;
+				}
+				else if( alias_detected > 0 ){
 					alias_detected = 0;
 					int i;
 					int j;
@@ -45,17 +49,14 @@ program:
 							);
 						}
 					}
-					printf("\nThe expanded command is: %s\n", alias.reparse_string);
 					yy_scan_string(alias.reparse_string);
-
 					return 570;
 				}
 				else{
 					yyrestart(stdin);
 					return OK;
 				}
-				}
-
+			}
 			;
 goodbye:
 			EXIT EOLN{
@@ -161,15 +162,17 @@ piping:
 			;
 commands:
 			WORD{
-
-
 				int i = 0;
-				while( i < alias.used && strcmp($1, alias.alname[i])){
+				while( i < alias.used && strcmp($1, alias.alname[i]) ){
 					++i;
 				}
 				if( i < alias.used ){
+					if( alias.found[i] > 0 ){
+						loop_detected = 1;
+					}
 					alias_detected++;
 					strcpy($1,alias.alstr[i]);
+					alias.found[i]++;
 				}
 
 				cmdtab.cmd[currcmd].cmdname = $1;
@@ -203,20 +206,17 @@ commands:
 				printf("after pipe command name is : %s\n", $3);
 
 				int i = 0;
-				while( i < alias.used && strcmp($3, alias.alname[i])){
-					printf("\nLooping");
+				while( i < alias.used && strcmp($1, alias.alname[i]) ){
 					++i;
 				}
-				if( i >= alias.used ){
-					printf("\nNo alias found");
-				}
-				else{
-					printf("\nAlias found");
+				if( i < alias.used ){
+					if( alias.found[i] > 0 ){
+						loop_detected = 1;
+					}
 					alias_detected++;
-					strcpy($3,alias.alstr[i]);
+					strcpy($1,alias.alstr[i]);
+					alias.found[i]++;
 				}
-
-				printf("Command is %s \n", $3);
 
 				++has_pipes;
 				++currcmd;

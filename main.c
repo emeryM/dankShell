@@ -35,6 +35,7 @@ void shell_init(){
 	alias.reparse_string = alstring;
 	alias.used = 0;
 	alias_detected = 0;
+	loop_detected = 0;
 }
 
 
@@ -65,7 +66,6 @@ void clear_args(){
 	//clear alias variables
 	alias_detected = 0;
 	memset(alias.reparse_string,0,strlen(alias.reparse_string));
-	builtin = 0;
 }
 
 
@@ -106,6 +106,7 @@ void set_alias(){
 		}
 		alias.alname[i] = cmdtab.cmd[currcmd].atptr->args[0];
 		alias.alstr[i] = cmdtab.cmd[currcmd].atptr->args[1];
+		alias.found[i] = 0;
 		if( i == alias.used ){
 			++alias.used;
 		}
@@ -297,14 +298,22 @@ void piped_and_sniped(){
 
 
 void process_command(){
-	if ( builtin ){
+	if( loop_detected > 0 ){
+		loop_detected = 0;
+		int i;
+		for( i = 0; i < alias.used; ++i ){
+			alias.found[i] = 0;
+		}
+		perror("Infinite alias loop detected.");
+		clear_args();
+	}
+	else if ( builtin ){
 		execute_builtin();
 		clear_args();
 	}
 	else{
 		//this if statement is for testing pipes
 		printf("calling : %s\n",cmdtab.cmd[currcmd].cmdname );
-
 		if(has_pipes > 0){
 			printf("calling piped and sniped: %s\n",cmdtab.cmd[currcmd].cmdname );
 			piped_and_sniped();
@@ -318,8 +327,6 @@ void process_command(){
 		}
 		else{
 		execute_command();
-
-		printf("getting here 3");
 		clear_args();
 		}
 	}
@@ -341,6 +348,7 @@ int main( int argc, char* argv[] ) {
 				process_command();
 				break;
 			case 1:
+				clear_args();
 				recover_from_errors();
 				break;
 			case 2:
@@ -349,7 +357,6 @@ int main( int argc, char* argv[] ) {
 				break;
 			case 570:
 				clear_args();
-				printf("%s\n", "Boogers");
 				yyparse();
 				process_command();
 				break;
