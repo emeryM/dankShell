@@ -37,12 +37,15 @@ void shell_init(){
 	alias.used = 0;
 	alias_detected = 0;
 	loop_detected = 0;
+	print_flag = 0;
 }
 
 
 void print_prompt(){
-	printf(KGRN "dankShell:");
-	printf(KBLK " ");
+	if( print_flag == 0 ){
+		printf(KGRN "dankShell:");
+		printf(KBLK " ");
+	}
 }
 
 
@@ -86,12 +89,12 @@ int get_command(){
 
 void list_aliases(){
 	if( alias.used == 0 ){
-		printf("No aliases to display.");
+		printf("No aliases to display.\n");
 	}
 	else{
 		int i;
 		for(i = 0; i < alias.used; ++i ){
-			printf("\n%s\t%s", alias.alname[i], alias.alstr[i]);
+			printf("%s\t%s\n", alias.alname[i], alias.alstr[i]);
 		}
 	}
 }
@@ -99,7 +102,7 @@ void list_aliases(){
 
 void set_alias(){
 	if (alias.used >= MAXALIAS){
-		printf("\nToo many aliases already exist.");
+		printf("Too many aliases already exist.\n");
 	}
 	else{
 		int i = 0;
@@ -133,7 +136,7 @@ void remove_alias(){
 		alias.alname[alias.used] = "";
 		alias.found[alias.used] = 0;
 		alias.alstr[alias.used--] = "";
-		printf("Alias removed.");
+		printf("Alias removed.\n");
 	}
 }
 
@@ -217,7 +220,7 @@ void execute_command(){
 		wait ((int *) 0);
 	}
 	else{
-		fprintf(stderr, "Syntax Error.");
+		fprintf(stderr, "Syntax Error.\n");
 	}
 }
 
@@ -233,7 +236,7 @@ void piped_and_sniped(){
 	int p;
 	for(p=0; p < num_pipes; ++p){
 		if(pipe(pipetab.pipes[p]) == -1){
-			fprintf(stderr, "Pipe error");
+			fprintf(stderr, "Pipe error\n");
 			exit(1);
 		}
 	}
@@ -308,12 +311,10 @@ void process_command(){
 		for( i = 0; i < alias.used; ++i ){
 			alias.found[i] = 0;
 		}
-		fprintf(stderr, "Error: Infinite alias loop detected.");
-		clear_args();
+		fprintf(stderr, "Error: Infinite alias loop detected.\n");
 	}
 	else if ( builtin ){
 		execute_builtin();
-		clear_args();
 	}
 	else{
 		if(has_pipes > 0){
@@ -326,9 +327,14 @@ void process_command(){
 		}
 		else{
 			execute_command();
-			clear_args();
 		}
 	}
+	clear_args();
+	int i;
+	for ( i = 0; i < alias.used; ++i ){
+		alias.found[i] = 0;
+	}
+	print_flag = 0;
 }
 
 
@@ -355,12 +361,13 @@ int main( int argc, char* argv[] ) {
 				exit( EXIT_SUCCESS );
 				break;
 			case 570:
+				printf("getting here");
 				clear_args();
 				yyparse();
 				process_command();
 				break;
 			default:
-				fprintf(stderr, "Error: Unable to get command.");
+				fprintf(stderr, "Error: Unable to get command.\n");
 				break;
 		}
 	}

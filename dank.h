@@ -68,3 +68,5 @@ int alias_detected;					// indicates presence of aliases on a line of input
 int loop_detected;					// infinite alias loop detected
 
 extern char **environ;			// allows access to shell environment variables
+
+int print_flag;

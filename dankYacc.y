@@ -51,9 +51,11 @@ program:
 							}
 						}
 						yy_scan_string(alias.reparse_string);
+						print_flag = -1;
 						return 570;
 					}
 					else{
+						print_flag = 0;
 						yyrestart(stdin);
 						return OK;
 					}
@@ -105,7 +107,7 @@ changeDir:
 					builtin= CD;
 			}
 			|	CD HOME WORD EOLN {
-					printf("Changed directory to home\n");
+					printf("Changed directory to %s\n", $3);
 					chdir(getenv("HOME"));
 					chdir($3);
 					builtin= CD;
@@ -177,12 +179,15 @@ commands:
 						++i;
 					}
 					if( i < alias.used ){
-						if( alias.found[i] > 0 ){
-							loop_detected = 1;
-						}
 						alias_detected++;
 						strcpy($1,alias.alstr[i]);
-						alias.found[i]++;
+						if( alias.found[i] == 1 ){
+							loop_detected = 1;
+							alias.found[i] = 0;
+						}
+						else{
+							alias.found[i] = 1;
+						}
 					}
 					cmdtab.cmd[currcmd].cmdname = $1;
 					cmdtab.cmd[currcmd].nargs = 0;
@@ -203,8 +208,6 @@ commands:
 			}
 			| commands WORD {
 					cmdtab.cmd[currcmd].nargs++;
-					printf("we dem args, nargs: %d\n", cmdtab.cmd[currcmd].nargs);
-					printf("the arg is: %s\n",$2 );
 					cmdtab.cmd[currcmd].atptr->args[cmdtab.cmd[currcmd].nargs] = $2;
 			}
 			| commands PIPE WORD {
@@ -213,12 +216,15 @@ commands:
 						++i;
 					}
 					if( i < alias.used ){
-						if( alias.found[i] > 0 ){
-							loop_detected = 1;
-						}
 						alias_detected++;
 						strcpy($1,alias.alstr[i]);
-						alias.found[i]++;
+						if( alias.found[i] == 1 ){
+							loop_detected = 1;
+							alias.found[i] = 0;
+						}
+						else{
+							alias.found[i] = 1;
+						}
 					}
 					++has_pipes;
 					++currcmd;
