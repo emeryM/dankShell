@@ -17,6 +17,7 @@ void shell_init(){
 		cmd.cmdname = NULL;
 		cmd.infd = -1;
 		cmd.outfd = -1;
+		cmd.errfd = -1;
 		cmd.nargs = 0;
 		cmd.atptr = args;
 		cmdtab.cmd[i] = cmd;
@@ -40,7 +41,7 @@ void shell_init(){
 
 
 void print_prompt(){
-	printf(KGRN "\ndankShell:");
+	printf(KGRN "dankShell:");
 	printf(KBLK " ");
 }
 
@@ -53,6 +54,7 @@ void clear_args(){
 		cmdtab.cmd[currcmd].cmdname = NULL;
 		cmdtab.cmd[currcmd].infd = -1;
 		cmdtab.cmd[currcmd].outfd = -1;
+		cmdtab.cmd[currcmd].errfd = -1;
 		for (i = 0; i < cmdtab.cmd[currcmd].nargs+1; ++i){
 			cmdtab.cmd[currcmd].atptr->args[i] = NULL;
 		}
@@ -120,7 +122,7 @@ void remove_alias(){
 		++i;
 	}
 	if( i >= alias.used ){
-		printf("Alias not found");
+		fprintf(stderr, "Error: Alias does not exist.");
 	}
 	else{
 		while( i < alias.used ){
@@ -129,7 +131,9 @@ void remove_alias(){
 			++i;
 		}
 		alias.alname[alias.used] = "";
+		alias.found[alias.used] = 0;
 		alias.alstr[alias.used--] = "";
+		printf("Alias removed.");
 	}
 }
 
@@ -170,8 +174,9 @@ void execute_builtin(){
 
 void execute_command_redir(){
 	int process = fork ();
-	if (process > 0){
-		wait ((int *) 0);
+	if(process == -1){
+		perror("Fork error");
+		exit (2);
 	}
 	else if (process == 0){
 		if(cmdtab.cmd[currcmd].errfd > -1 ){
@@ -184,36 +189,35 @@ void execute_command_redir(){
 		}
 		cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
 		execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
-		fprintf (stderr, "Can't execute \n");
+		perror("Execvp error");
 		exit (1);
 	}
-	else if(process == -1){
-		fprintf (stderr, "Can't fork!\n");
-		exit (2);
+	else if (process > 0){
+		wait ((int *) 0);
 	}
 	else{
-		printf("Syntax Error\n");
+		fprintf(stderr, "Syntax Error\n");
 	}
 }
 
 
 void execute_command(){
 	int process = fork ();
-	if (process > 0){
-		wait ((int *) 0);
+	if(process == -1){
+		perror("Fork error");
+		exit (2);
 	}
 	else if (process == 0){
 		cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
 		execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
-		fprintf (stderr, "Can't execute \n");
+		perror("Execvp error");
 		exit (1);
 	}
-	else if(process == -1){
-		fprintf (stderr, "Can't fork!\n");
-		exit (2);
+	else if (process > 0){
+		wait ((int *) 0);
 	}
 	else{
-		printf("Syntax Error\n");
+		fprintf(stderr, "Syntax Error.");
 	}
 }
 
@@ -229,7 +233,7 @@ void piped_and_sniped(){
 	int p;
 	for(p=0; p < num_pipes; ++p){
 		if(pipe(pipetab.pipes[p]) == -1){
-			perror("Pipe failed");
+			fprintf(stderr, "Pipe error");
 			exit(1);
 		}
 	}
@@ -273,7 +277,7 @@ void piped_and_sniped(){
 			//execute command
 			cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
 			execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
-			perror("execvp failed");
+			perror("Execvp error");
 			close(cmdtab.cmd[currcmd].errfd);
 			exit(1);
 		}
@@ -304,7 +308,7 @@ void process_command(){
 		for( i = 0; i < alias.used; ++i ){
 			alias.found[i] = 0;
 		}
-		perror("Infinite alias loop detected.");
+		fprintf(stderr, "Error: Infinite alias loop detected.");
 		clear_args();
 	}
 	else if ( builtin ){
@@ -312,22 +316,17 @@ void process_command(){
 		clear_args();
 	}
 	else{
-		//this if statement is for testing pipes
-		printf("calling : %s\n",cmdtab.cmd[currcmd].cmdname );
 		if(has_pipes > 0){
-			printf("calling piped and sniped: %s\n",cmdtab.cmd[currcmd].cmdname );
 			piped_and_sniped();
 			clear_args();
 		}else if (cmdtab.cmd[currcmd].outfd > -1 ){
-			printf("attempting to close file redirect\n");
 			execute_command_redir();
 		}else if (cmdtab.cmd[currcmd].errfd > -1 ){
-			printf("attempting to close err redirect\n");
 			execute_command_redir();
 		}
 		else{
-		execute_command();
-		clear_args();
+			execute_command();
+			clear_args();
 		}
 	}
 }
@@ -361,7 +360,7 @@ int main( int argc, char* argv[] ) {
 				process_command();
 				break;
 			default:
-				printf("%c ", CMD);
+				fprintf(stderr, "Error: Unable to get command.");
 				break;
 		}
 	}
