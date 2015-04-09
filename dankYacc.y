@@ -8,7 +8,7 @@
 %token INTEGER DECIMAL
 %token WORD FLAG EOLN QUOTED
 %token CD EXIT SETENV HOME_PATH HOME ROOT
-%token PIPE QUOTE OPEN_CARET CLOSE_CARET DBL_CLOSE_CARET ERROR_CARET BACKSLASH AMPERSAND PLUS SEMICOLON OPEN_PAREN CLOSE_PAREN TWO_PERIODS
+%token PIPE QUOTE OPEN_CARET CLOSE_CARET DBL_CLOSE_CARET ERROR_CARET BACKSLASH AMPERSAND PLUS SEMICOLON OPEN_PAREN CLOSE_PAREN TWO_PERIODS OPEN_VAR CLOSE_VAR
 %token UNSETENV PRINTENV ALIAS UNALIAS
 
 %%
@@ -53,7 +53,7 @@ program:
 						}
 						yy_scan_string(alias.reparse_string);
 						print_flag = -1;
-						return 570;
+						return 3;
 					}
 					else{
 						print_flag = 0;
@@ -111,6 +111,15 @@ changeDir:
 					printf("Changed directory to %s\n", $3);
 					chdir(getenv("HOME"));
 					chdir($3);
+					builtin= CD;
+			}
+			|	CD QUOTED EOLN {
+					char *q = $2;
+					char *new = q+1;
+					new[strlen(new)-1] = '\0';
+					printf("Changed directory to %s\n", new);
+					chdir(getenv("HOME"));
+					chdir(new);
 					builtin= CD;
 			}
 			;
@@ -216,6 +225,25 @@ commands:
 			| commands WORD {
 					cmdtab.cmd[currcmd].nargs++;
 					cmdtab.cmd[currcmd].atptr->args[cmdtab.cmd[currcmd].nargs] = $2;
+			}
+			| commands QUOTED {
+					cmdtab.cmd[currcmd].nargs++;
+					char *q = $2;
+					char *new = q+1;
+					new[strlen(new)-1] = '\0';
+					cmdtab.cmd[currcmd].atptr->args[cmdtab.cmd[currcmd].nargs] = new;
+			}
+			| commands OPEN_VAR WORD CLOSE_VAR {
+					if ( getenv($3) ){
+						cmdtab.cmd[currcmd].nargs++;
+						char *q = getenv($3);
+						cmdtab.cmd[currcmd].atptr->args[cmdtab.cmd[currcmd].nargs] = q;
+					}
+					else{
+						fprintf(stderr, "Error: Not a valid variable.\n");
+						clear_args();
+						YYACCEPT;
+					}
 			}
 			| commands PIPE WORD {
 					int i = 0;

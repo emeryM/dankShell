@@ -26,24 +26,27 @@ unalias    return UNALIAS;
 ";"        return SEMICOLON;
 "("        return OPEN_PAREN;
 ")"        return CLOSE_PAREN;
-"+"		   return PLUS;
+"+"		   	 return PLUS;
 "|"        return PIPE;
 "\""       return QUOTE;
 "<"        return OPEN_CARET;
 ">"        return CLOSE_CARET;
 ">>"   	   return DBL_CLOSE_CARET;
-"2>"	   return ERROR_CARET;
+"2>"	  	 return ERROR_CARET;
 "\\"       return BACKSLASH;
 "&"        return AMPERSAND;
 "\n"       return EOLN;
 "~/"       return HOME_PATH;
-"~"		   return HOME;
-"/"		   return ROOT;
+"~"		  	 return HOME;
+"/"		  	 return ROOT;
+"\$\{"		 return OPEN_VAR;
+"\}"			 return CLOSE_VAR;
 
-
-"-"?[a-zA-Z/.]+ 		yylval=strdup(yytext); return WORD;
+"-"?[a-zA-Z0-9/_.:]+ 		yylval=strdup(yytext); return WORD;
 
 \"([^\\\"]|\\.)*\"				yylval=strdup(yytext); return QUOTED;
+
+
 
 [0-9]+     		yylval=strdup(yytext); return INTEGER;
 [0-9.]+    		yylval=strdup(yytext); return DECIMAL;

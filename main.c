@@ -360,7 +360,7 @@ int main( int argc, char* argv[] ) {
 				printf("%s\n", "Smoke weed erry day...");
 				exit( EXIT_SUCCESS );
 				break;
-			case 570:
+			case 3:
 				printf("getting here");
 				clear_args();
 				yyparse();
