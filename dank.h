@@ -39,6 +39,7 @@ typedef struct cmd {
 	char	*cmdname;
 	int infd;
 	int outfd;
+	int errfd;
 	int nargs;
 	ARGTAB *atptr;
 }	COMMAND;
@@ -47,7 +48,6 @@ typedef struct cmd {
 typedef struct cmdtab {
 	COMMAND cmd[MAXCMDS];
 } CMDTAB;
-
 
 /* alias structure */
 typedef struct alias {
