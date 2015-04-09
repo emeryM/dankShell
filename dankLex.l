@@ -42,7 +42,7 @@ unalias    return UNALIAS;
 "\$\{"		 return OPEN_VAR;
 "\}"			 return CLOSE_VAR;
 
-"-"?[a-zA-Z0-9/_.:]+ 		yylval=strdup(yytext); return WORD;
+"-"?[a-zA-Z0-9/_\-.:]+ 		yylval=strdup(yytext); return WORD;
 
 \"([^\\\"]|\\.)*\"				yylval=strdup(yytext); return QUOTED;
 
