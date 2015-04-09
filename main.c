@@ -182,6 +182,10 @@ void execute_command_redir(){
 		exit (2);
 	}
 	else if (process == 0){
+		if(cmdtab.cmd[currcmd].infd > -1 ){
+			dup2(cmdtab.cmd[currcmd].infd, STDIN_FILENO);
+			close(cmdtab.cmd[currcmd].infd);
+		}
 		if(cmdtab.cmd[currcmd].errfd > -1 ){
 			dup2(cmdtab.cmd[currcmd].errfd, STDOUT_FILENO);
 			close(cmdtab.cmd[currcmd].errfd);
@@ -246,6 +250,10 @@ void piped_and_sniped(){
 	while (i  <= num_pipes){
 		// fork
 		if(fork() == 0){
+			if(cmdtab.cmd[currcmd].infd > -1 ){
+				dup2(cmdtab.cmd[currcmd].infd, STDIN_FILENO);
+				close(cmdtab.cmd[currcmd].infd);
+			}
 			// special case: first fork
 			if(i == 0){
 				close(1);
@@ -320,12 +328,18 @@ void process_command(){
 		if(has_pipes > 0){
 			piped_and_sniped();
 			clear_args();
-		}else if (cmdtab.cmd[currcmd].outfd > -1 ){
-			execute_command_redir();
-		}else if (cmdtab.cmd[currcmd].errfd > -1 ){
+		}
+		else if (cmdtab.cmd[currcmd].infd > -1 ){
 			execute_command_redir();
 		}
-		else{
+		else if (cmdtab.cmd[currcmd].outfd > -1 ){
+			execute_command_redir();
+		}
+		else if (cmdtab.cmd[currcmd].errfd > -1 ){
+			execute_command_redir();
+		}
+		else
+		{
 			execute_command();
 		}
 	}
@@ -357,11 +371,10 @@ int main( int argc, char* argv[] ) {
 				recover_from_errors();
 				break;
 			case 2:
-				printf("%s\n", "Smoke weed erry day...");
+				printf("%s\n", "Succeed erry day...");
 				exit( EXIT_SUCCESS );
 				break;
 			case 3:
-				printf("getting here");
 				clear_args();
 				yyparse();
 				process_command();

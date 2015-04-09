@@ -213,6 +213,9 @@ commands:
 					cmdtab.cmd[currcmd].atptr->args[0] = $1;
 					builtin = 0;
 			}
+			| commands OPEN_CARET WORD {
+					cmdtab.cmd[currcmd].infd = open($3, O_RDONLY, 0);
+			}
 			| commands CLOSE_CARET WORD {
 					cmdtab.cmd[currcmd].outfd = open($3, O_WRONLY | O_CREAT ,0755);
 			}
