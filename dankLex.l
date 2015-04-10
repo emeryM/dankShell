@@ -22,6 +22,8 @@ unalias    return UNALIAS;
 
 
 
+"*"		   return WILDCARDWORD;
+"?"		   return WILDCARDCHAR;
 ".."       return TWO_PERIODS;
 ";"        return SEMICOLON;
 "("        return OPEN_PAREN;

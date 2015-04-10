@@ -178,7 +178,7 @@ void execute_builtin(){
 void execute_command_redir(){
 	int process = fork ();
 	if(process == -1){
-		perror("Fork error");
+		fprintf(stderr, "Error: Forking Error\n");
 		exit (2);
 	}
 	else if (process == 0){
@@ -196,7 +196,7 @@ void execute_command_redir(){
 		}
 		cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
 		execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
-		perror("Execvp error");
+		fprintf(stderr, "Error: Command cannot be executed\n");
 		exit (1);
 	}
 	else if (process > 0){
@@ -288,7 +288,7 @@ void piped_and_sniped(){
 			//execute command
 			cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
 			execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
-			perror("Execvp error");
+			fprintf(stderr, "Error: Command cannot be executed\n");
 			close(cmdtab.cmd[currcmd].errfd);
 			exit(1);
 		}
