@@ -211,13 +211,13 @@ void execute_command_redir(){
 void execute_command(){
 	int process = fork ();
 	if(process == -1){
-		perror("Fork error");
+		fprintf(stderr, "Error: Error Forking Process\n");
 		exit (2);
 	}
 	else if (process == 0){
 		cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
 		execvp( cmdtab.cmd[currcmd].cmdname, cmdtab.cmd[currcmd].atptr->args );
-		perror("Execvp error");
+		fprintf(stderr, "Error: Command cannot be executed\n");
 		exit (1);
 	}
 	else if (process > 0){
