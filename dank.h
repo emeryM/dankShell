@@ -70,6 +70,7 @@ int loop_detected;					// infinite alias loop detected
 
 extern char **environ;			// allows access to shell environment variables
 
+char curr_dir[2048];//stores curr directory for printing
 char currFiles[100][128];//file list for wildcarding
 int numFiles;//track number of files in list
 int print_flag;

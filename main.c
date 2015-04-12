@@ -44,10 +44,16 @@ void shell_init(){
 	}
 }
 
+void get_dir(){
+	getcwd(curr_dir, sizeof(curr_dir));
+	//return curr_dir;
+}
 
 void print_prompt(){
 	if( print_flag == 0 ){
+		get_dir();
 		printf(KGRN "dankShell:");
+		printf("%s$", curr_dir );
 		printf(KBLK " ");
 	}
 }
