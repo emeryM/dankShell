@@ -28,6 +28,7 @@ program:
 						YYACCEPT;
 					}
 					else if( alias_detected > 0 ){
+						printf("alias detected after commands\n");
 						alias_detected = 0;
 						int i;
 						int j;
@@ -213,6 +214,8 @@ commands:
 					cmdtab.cmd[currcmd].nargs = 0;
 					cmdtab.cmd[currcmd].atptr->args[0] = $1;
 					builtin = 0;
+					++cmdcount;
+					//might need ++currcmd;
 			}
 			| commands OPEN_CARET WORD {
 					cmdtab.cmd[currcmd].infd = open($3, O_RDONLY, 0);

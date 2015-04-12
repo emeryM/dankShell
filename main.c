@@ -38,6 +38,10 @@ void shell_init(){
 	alias_detected = 0;
 	loop_detected = 0;
 	print_flag = 0;
+	for (i = 0; i < 100; ++i)
+	{
+		//currFiles[i] = ;
+	}
 }
 
 
@@ -73,6 +77,120 @@ void clear_args(){
 	memset(alias.reparse_string,0,strlen(alias.reparse_string));
 }
 
+void fill_file_array(){
+	int process = fork ();
+	if(process == -1){
+		fprintf(stderr, "Error: Forking Error\n");
+		exit (2);
+	}else if(process == 0){
+	
+		cmdtab.cmd[currcmd].outfd = open("dankShell.txt", O_WRONLY | O_CREAT ,0755);
+		dup2(cmdtab.cmd[currcmd].outfd, STDOUT_FILENO);
+		close(cmdtab.cmd[currcmd].outfd);
+
+		//cmdtab.cmd[currcmd].atptr->args[0]= cmdtab.cmd[currcmd].cmdname;
+		execlp("ls", "ls", (char *)NULL);
+		fprintf(stderr, "Error: Command cannot be executed\n");
+		exit (1);
+	}
+	else if (process > 0){
+		wait ((int *) 0);
+	}
+	else{
+		fprintf(stderr, "Syntax Error\n");
+	}
+}
+
+void scan_args(){
+	printf("in that dank scan args %d\n", cmdcount);
+	//currFiles[0] = "doge";
+	//currFiles[1] = "cat";
+	//printf("0 is %s\n",currFiles[0] );
+	//printf("1 is %s\n", currFiles[1]);
+	printf("test\n");
+	fill_file_array();
+
+	FILE *fp;
+   char str[128];
+   int i=0,j=0;
+
+   /* opening file for reading */
+   fp = fopen("dankShell.txt" , "r");
+   if(fp == NULL) {
+      perror("Error opening file");
+      //return(-1);
+   }
+   while( fgets (currFiles[i], 128, fp)!=NULL ) {
+      /* writing content to stdout */
+      //puts(str);
+      //currFiles[i] = str;
+   	  currFiles[i][strlen(currFiles[i]) - 1] = '\0';
+      printf("%s\n", currFiles[i] );
+      printf("array index is : %d\n",i );
+      ++numFiles;
+      ++i;
+   }
+   fclose(fp);
+
+    int total = i;
+    printf("about to print\n");
+    for(i = 0; i < total; ++i)
+        printf("%s\n", currFiles[i]);
+
+
+
+
+
+	i = 0, j = 0;
+	for(i = 0; i < cmdcount; ++i){
+		printf("first loop\n");
+		for(j = 0; j < cmdtab.cmd[i].nargs+1; ++j){
+			printf("second loop\n");
+			//search each arg for a wildcard and replace?
+			char * arg = cmdtab.cmd[i].atptr->args[j];
+			printf("arg si %s\n", arg );
+			int k = 0;
+			printf("about to scan a single arg\n");
+			while(k < strlen(arg)){
+				printf("blub\n");
+				if (arg[k] == '*'){
+
+					printf("arg before : %s\n", cmdtab.cmd[i].atptr->args[j]);
+					char *src, *dst;
+				    for (src = dst = cmdtab.cmd[i].atptr->args[j]; *src != '\0'; src++) {
+				        *dst = *src;
+				        if (*dst != '*') dst++;
+				    }
+				    *dst = '\0';
+				    printf("arg is now %s\n", cmdtab.cmd[i].atptr->args[j]);
+				    int x=0;
+				    while(x < numFiles){
+				    	if(strstr(currFiles[x], cmdtab.cmd[i].atptr->args[j]) != NULL) {
+						    cmdtab.cmd[i].atptr->args[j] = currFiles[x];
+						    printf("changed arg to %s\n",cmdtab.cmd[i].atptr->args[j]);
+						}
+						++x;
+				    }
+
+
+				    //need to get file name sinto an aray
+
+					//there is a wildcard, so look at files to replace it
+					//need an array of files names for the current directory
+					//use loop with strstr to find macthes.
+					//replace arg with str if replacement found and break out.
+				}
+				//mayb can handle multiple question marks, by marking true if one found
+				//then deleteing all ?'s and then substring matching
+				if (arg[k] == '?'){
+					//there is a wildcard, so look at files to replace it
+					
+				}
+				++k;
+			}
+		}
+	}
+}
 
 int get_command(){
 	if( yyparse() ){
@@ -85,6 +203,7 @@ int get_command(){
 		return 0;
 	}
 }
+
 
 
 void list_aliases(){
@@ -340,6 +459,8 @@ void process_command(){
 		}
 		else
 		{
+			printf("in the right place\n");
+			scan_args();
 			execute_command();
 		}
 	}
@@ -376,6 +497,7 @@ int main( int argc, char* argv[] ) {
 				break;
 			case 3:
 				clear_args();
+				printf("for me to understand\n");
 				yyparse();
 				process_command();
 				break;
