@@ -101,28 +101,26 @@ void fill_file_array(){
 	}
 }
 
-bool match(char *first, char * second)//credit for this function http://www.geeksforgeeks.org/wildcard-character-matching/
+bool match(char *argument, char * filename)//credit for this function http://www.geeksforgeeks.org/wildcard-character-matching/
 {
     // If we reach at the end of both strings, we are done
-    if (*first == '\0' && *second == '\0')
+    if (*argument == '\0' && *filename == '\0')
         return true;
  
     // Make sure that the characters after '*' are present in second string.
     // This function assumes that the first string will not contain two
     // consecutive '*' 
-    if (*first == '*' && *(first+1) != '\0' && *second == '\0')
+    if (*argument == '*' && *(argument+1) != '\0' && *filename == '\0')
         return false;
  
     // If the first string contains '?', or current characters of both 
     // strings match
-    if (*first == '?' || *first == *second)
-        return match(first+1, second+1);
+    if (*argument == '?' || *argument == *filename)
+        return match(argument+1, filename+1);
  
     // If there is *, then there are two possibilities
-    // a) We consider current character of second string
-    // b) We ignore current character of second string.
-    if (*first == '*')
-        return match(first+1, second) || match(first, second+1);
+    if (*argument == '*')
+        return match(argument+1, filename) || match(argument, filename+1);
     return false;
 }
 void scan_args(){
@@ -157,7 +155,6 @@ void scan_args(){
 					//need an array of files names for the current directory
 					//use loop with strstr to find macthes.
 					//replace arg with str if replacement found and break out.
-
 
 				if (arg[k] == '?' || arg[k] == '*'){//there is a wildcard, so look at files to replace it
 				    int x=0;
@@ -244,6 +241,7 @@ void remove_alias(){
 
 
 void execute_builtin(){
+
 	switch( builtin ){
 		case SETENV:
 			setenv(cmdtab.cmd[currcmd].atptr->args[0], cmdtab.cmd[currcmd].atptr->args[1], 1);
@@ -259,6 +257,11 @@ void execute_builtin(){
 			unsetenv(cmdtab.cmd[currcmd].atptr->args[0]);
 			break;
 		case CD:
+
+			if(cmdcount > 0){
+			
+				chdir(cmdtab.cmd[currcmd].atptr->args[0]);
+			}
 			break;
 		case ALIAS:
 			if(cmdtab.cmd[currcmd].nargs == 0){
@@ -424,20 +427,25 @@ void process_command(){
 		fprintf(stderr, "Error: Infinite alias loop detected.\n");
 	}
 	else if ( builtin ){
+		scan_args();
 		execute_builtin();
 	}
 	else{
 		if(has_pipes > 0){
+			scan_args();
 			piped_and_sniped();
 			clear_args();
 		}
 		else if (cmdtab.cmd[currcmd].infd > -1 ){
+			scan_args();
 			execute_command_redir();
 		}
 		else if (cmdtab.cmd[currcmd].outfd > -1 ){
+			scan_args();
 			execute_command_redir();
 		}
 		else if (cmdtab.cmd[currcmd].errfd > -1 ){
+			scan_args();
 			execute_command_redir();
 		}
 		else

@@ -73,55 +73,53 @@ goodbye:
 
 changeDir:
 			 	CD WORD EOLN {
-					printf("Changed directory to %s\n", $2);
-					chdir($2);
+					cmdtab.cmd[currcmd].atptr->args[0] = $2; 
+					++cmdcount;
+
+					//chdir($2);
 					builtin = CD;
 			}
 			| CD HOME_PATH WORD EOLN {
-					printf("Changed directory to %s\n", $3);
 					chdir(getenv("HOME"));
-					chdir($3);
+					cmdtab.cmd[currcmd].atptr->args[0] = $3; 
+					++cmdcount;
 					builtin = CD;
 			}
 			|	CD TWO_PERIODS WORD EOLN {
-					printf("Changed directory to %s\n", $3);
 					chdir("..");
-					chdir($3);
+					cmdtab.cmd[currcmd].atptr->args[0] = $3; 
+					++cmdcount;
 					builtin= CD;
 			}
 			|	CD TWO_PERIODS EOLN {
-					printf("Changed directory up 1\n" );
 					chdir("..");
 					builtin= CD;
 			}
 			|	CD EOLN {
-					printf("Changed directory to home\n");
 					chdir(getenv("HOME"));
 					builtin= CD;
 			}
 			|	CD HOME EOLN {
-					printf("Changed directory to home\n");
 					chdir(getenv("HOME"));
 					builtin= CD;
 			}
 			|	CD ROOT EOLN {
-					printf("Changed directory to root\n");
 					chdir("/");
 					builtin= CD;
 			}
 			|	CD HOME WORD EOLN {
-					printf("Changed directory to %s\n", $3);
 					chdir(getenv("HOME"));
-					chdir($3);
+					cmdtab.cmd[currcmd].atptr->args[0] = $3; 
+					++cmdcount;
 					builtin= CD;
 			}
 			|	CD QUOTED EOLN {
 					char *q = $2;
 					char *new = q+1;
 					new[strlen(new)-1] = '\0';
-					printf("Changed directory to %s\n", new);
 					chdir(getenv("HOME"));
-					chdir(new);
+					cmdtab.cmd[currcmd].atptr->args[0] = new; 
+					++cmdcount;
 					builtin= CD;
 			}
 			;
