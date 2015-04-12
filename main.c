@@ -101,90 +101,73 @@ void fill_file_array(){
 	}
 }
 
+bool match(char *first, char * second)//credit for this function http://www.geeksforgeeks.org/wildcard-character-matching/
+{
+    // If we reach at the end of both strings, we are done
+    if (*first == '\0' && *second == '\0')
+        return true;
+ 
+    // Make sure that the characters after '*' are present in second string.
+    // This function assumes that the first string will not contain two
+    // consecutive '*' 
+    if (*first == '*' && *(first+1) != '\0' && *second == '\0')
+        return false;
+ 
+    // If the first string contains '?', or current characters of both 
+    // strings match
+    if (*first == '?' || *first == *second)
+        return match(first+1, second+1);
+ 
+    // If there is *, then there are two possibilities
+    // a) We consider current character of second string
+    // b) We ignore current character of second string.
+    if (*first == '*')
+        return match(first+1, second) || match(first, second+1);
+    return false;
+}
 void scan_args(){
-	printf("in that dank scan args %d\n", cmdcount);
-	//currFiles[0] = "doge";
-	//currFiles[1] = "cat";
-	//printf("0 is %s\n",currFiles[0] );
-	//printf("1 is %s\n", currFiles[1]);
-	printf("test\n");
 	fill_file_array();
-
 	FILE *fp;
-   char str[128];
-   int i=0,j=0;
+    char str[128];
+    int i=0,j=0;
 
-   /* opening file for reading */
-   fp = fopen("dankShell.txt" , "r");
-   if(fp == NULL) {
-      perror("Error opening file");
-      //return(-1);
-   }
-   while( fgets (currFiles[i], 128, fp)!=NULL ) {
-      /* writing content to stdout */
-      //puts(str);
-      //currFiles[i] = str;
-   	  currFiles[i][strlen(currFiles[i]) - 1] = '\0';
-      printf("%s\n", currFiles[i] );
-      printf("array index is : %d\n",i );
-      ++numFiles;
-      ++i;
-   }
-   fclose(fp);
-
-    int total = i;
-    printf("about to print\n");
-    for(i = 0; i < total; ++i)
-        printf("%s\n", currFiles[i]);
-
-
-
-
-
+    /* opening file for reading */
+    fp = fopen("dankShell.txt" , "r");
+    if(fp == NULL) {
+       fprintf(stderr, "Error: Cannot open file.");
+    }
+    while( fgets (currFiles[i], 128, fp)!=NULL ) {
+       /* writing content to stdout */
+   	   currFiles[i][strlen(currFiles[i]) - 1] = '\0';
+       ++numFiles;
+       ++i;
+    }
+    fclose(fp);
+   
 	i = 0, j = 0;
 	for(i = 0; i < cmdcount; ++i){
-		printf("first loop\n");
 		for(j = 0; j < cmdtab.cmd[i].nargs+1; ++j){
-			printf("second loop\n");
 			//search each arg for a wildcard and replace?
 			char * arg = cmdtab.cmd[i].atptr->args[j];
-			printf("arg si %s\n", arg );
 			int k = 0;
-			printf("about to scan a single arg\n");
 			while(k < strlen(arg)){
-				printf("blub\n");
-				if (arg[k] == '*'){
-
-					printf("arg before : %s\n", cmdtab.cmd[i].atptr->args[j]);
-					char *src, *dst;
-				    for (src = dst = cmdtab.cmd[i].atptr->args[j]; *src != '\0'; src++) {
-				        *dst = *src;
-				        if (*dst != '*') dst++;
-				    }
-				    *dst = '\0';
-				    printf("arg is now %s\n", cmdtab.cmd[i].atptr->args[j]);
-				    int x=0;
-				    while(x < numFiles){
-				    	if(strstr(currFiles[x], cmdtab.cmd[i].atptr->args[j]) != NULL) {
-						    cmdtab.cmd[i].atptr->args[j] = currFiles[x];
-						    printf("changed arg to %s\n",cmdtab.cmd[i].atptr->args[j]);
-						}
-						++x;
-				    }
-
 
 				    //need to get file name sinto an aray
-
 					//there is a wildcard, so look at files to replace it
 					//need an array of files names for the current directory
 					//use loop with strstr to find macthes.
 					//replace arg with str if replacement found and break out.
-				}
-				//mayb can handle multiple question marks, by marking true if one found
-				//then deleteing all ?'s and then substring matching
-				if (arg[k] == '?'){
-					//there is a wildcard, so look at files to replace it
-					
+
+
+				if (arg[k] == '?' || arg[k] == '*'){//there is a wildcard, so look at files to replace it
+				    int x=0;
+				    while(x < numFiles){
+				    	if(match(cmdtab.cmd[i].atptr->args[j], currFiles[x])) {
+						    cmdtab.cmd[i].atptr->args[j] = currFiles[x];
+						    //swap old arg with new one
+						}
+						++x;
+				    }
 				}
 				++k;
 			}
@@ -459,7 +442,6 @@ void process_command(){
 		}
 		else
 		{
-			printf("in the right place\n");
 			scan_args();
 			execute_command();
 		}

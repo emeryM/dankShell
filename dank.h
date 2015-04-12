@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <fcntl.h>
+#include <stdbool.h>
 
 #define MAXCMDS 50						// maximum commands on one line of input
 #define MAXARGS 100						// maximum arguments for each command
