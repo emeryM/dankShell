@@ -1,4 +1,0 @@
-dankShell.txt
-dog
-hat
-this is cat.txt

@@ -148,6 +148,7 @@ void scan_args(){
        ++i;
     }
     fclose(fp);
+    remove("dankShell.txt");
    
 	i = 0, j = 0;
 	for(i = 0; i < cmdcount; ++i){
