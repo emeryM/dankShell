@@ -18,7 +18,6 @@
 %%
 
 program:
-
 			  goodbye 		{ return OK;}
 			| END_OF_FILE { yyrestart(stdin);
 											return OK;
