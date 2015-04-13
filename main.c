@@ -46,7 +46,6 @@ void shell_init(){
 
 void get_dir(){
 	getcwd(curr_dir, sizeof(curr_dir));
-	//return curr_dir;
 }
 
 void print_prompt(){

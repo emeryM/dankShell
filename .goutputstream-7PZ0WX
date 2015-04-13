@@ -1,0 +1,5 @@
+cd ..
+cd dankShell
+alias test printenv
+test
+bye

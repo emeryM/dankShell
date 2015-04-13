@@ -20,7 +20,7 @@ alias	   	 return ALIAS;
 unalias    return UNALIAS;
 
 
-
+<<EOF>>     return END_OF_FILE;
 
 "*"		   return WILDCARDWORD;
 "?"		   return WILDCARDCHAR;

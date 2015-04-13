@@ -3,9 +3,12 @@
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include "dank.h"
+
+
+
 %}
 
-%token INTEGER DECIMAL
+%token INTEGER DECIMAL END_OF_FILE
 %token WORD FLAG EOLN QUOTED
 %token CD EXIT SETENV HOME_PATH HOME ROOT
 %token PIPE QUOTE OPEN_CARET CLOSE_CARET DBL_CLOSE_CARET ERROR_CARET BACKSLASH AMPERSAND PLUS SEMICOLON OPEN_PAREN CLOSE_PAREN TWO_PERIODS OPEN_VAR CLOSE_VAR
@@ -17,12 +20,13 @@
 program:
 
 			  goodbye 	{return OK;}
-			| changeDir {return OK;}
-			| setEnvVar {return OK;}
-			| setAlias  {return OK;}
-			| piping    {return OK;}
-			| blank	    {return OK;}
-			| commands  {
+			| END_OF_FILE {printf("oef seen\n");builtin = EXIT; return OK;}
+			| changeDir { printf("chandir\n"); return OK;}
+			| setEnvVar {printf("cset envr\n");return OK;}
+			| setAlias  {printf("cset aliasr\n");return OK;}
+			| piping    {printf("piingr\n");return OK;}
+			| blank	    {printf("blankr\n");return OK;}
+			| commands  {printf("commands\n");
 					if( loop_detected > 0 ){
 						yyrestart(stdin);
 						YYACCEPT;
@@ -59,7 +63,9 @@ program:
 					}
 					else{
 						print_flag = 0;
+						printf("right before restart\n");
 						yyrestart(stdin);
+						printf("right after restart\n");
 						return OK;
 					}
 			}
