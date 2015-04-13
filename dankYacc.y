@@ -20,7 +20,7 @@
 program:
 
 			  goodbye 	{return OK;}
-			| END_OF_FILE {printf("oef seen\n");builtin = EXIT; return OK;}
+			| END_OF_FILE {printf("oef seen\n");return 1; return OK;}
 			| changeDir { printf("chandir\n"); return OK;}
 			| setEnvVar {printf("cset envr\n");return OK;}
 			| setAlias  {printf("cset aliasr\n");return OK;}

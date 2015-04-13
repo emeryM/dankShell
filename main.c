@@ -40,10 +40,7 @@ void shell_init(){
 	alias_detected = 0;
 	loop_detected = 0;
 	print_flag = 0;
-	for (i = 0; i < 100; ++i)
-	{
-		//currFiles[i] = ;
-	}
+
 }
 
 void get_dir(){
@@ -108,24 +105,18 @@ void fill_file_array(){
 	}
 }
 
-bool wildcarding(char *argument, char * filename)//credit for this function http://www.geeksforgeeks.org/wildcard-character-wildcardinging/
+bool wildcarding(char *argument, char * filename)
 {
-    // If we reach at the end of both strings, we are done
+	//return true if you hit end of strings, means tehre is a match
     if (*argument == '\0' && *filename == '\0')
         return true;
- 
-    // Make sure that the characters after '*' are present in second string.
-    // This function assumes that the first string will not contain two
-    // consecutive '*' 
+    //iff there is not  a match
     if (*argument == '*' && *(argument+1) != '\0' && *filename == '\0')
         return false;
- 
-    // If the first string contains '?', or current characters of both 
-    // strings wildcarding
+    //if there is a ?
     if (*argument == '?' || *argument == *filename)
         return wildcarding(argument+1, filename+1);
- 
-    // If there is *, then there are two possibilities
+    //if tehre is a *
     if (*argument == '*')
         return wildcarding(argument+1, filename) || wildcarding(argument, filename+1);
     return false;
@@ -136,13 +127,13 @@ void scan_args(){
     char str[128];
     int i=0,j=0;
 
-    /* opening file for reading */
+    //open file
     fp = fopen("dankShell.txt" , "r");
     if(fp == NULL) {
        fprintf(stderr, "Error: Cannot open file.");
     }
     while( fgets (currFiles[i], 128, fp)!=NULL ) {
-       /* writing content to stdout */
+       //write file to array - newlines
    	   currFiles[i][strlen(currFiles[i]) - 1] = '\0';
        ++numFiles;
        ++i;
@@ -491,12 +482,12 @@ int main( int argc, char* argv[] ) {
 				recover_from_errors();
 				break;
 			case 2:
-				printf("%s\n", "Succeed erry day...");
+				printf("%s\n", "Goodbye master, I will miss you...");
 				exit( EXIT_SUCCESS );
 				break;
 			case 3:
 				clear_args();
-				printf("for me to understand\n");
+				
 				yyparse();
 				process_command();
 				break;
