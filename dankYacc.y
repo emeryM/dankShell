@@ -19,56 +19,54 @@
 
 program:
 
-			  goodbye 	{return OK;}
-			| END_OF_FILE {printf("oef seen\n");builtin = EXIT; return OK;}
-			| changeDir { printf("chandir\n"); return OK;}
-			| setEnvVar {printf("cset envr\n");return OK;}
-			| setAlias  {printf("cset aliasr\n");return OK;}
-			| piping    {printf("piingr\n");return OK;}
-			| blank	    {printf("blankr\n");return OK;}
-			| commands  {printf("commands\n");
-					if( loop_detected > 0 ){
-						yyrestart(stdin);
-						YYACCEPT;
-					}
-					else if( alias_detected > 0 ){
-						printf("alias detected after commands\n");
-						alias_detected = 0;
-						int i;
-						int j;
-						for( j = 0; j <= currcmd; ++j){
-							for( i = 0; i <= cmdtab.cmd[j].nargs; ++i ){
-								strncat(
-									alias.reparse_string,
-									cmdtab.cmd[j].atptr->args[i],
-									MAXINPUTLENGTH-strlen(alias.reparse_string)
-								);
-								strncat(
-									alias.reparse_string,
-									" ",
-									MAXINPUTLENGTH-strlen(alias.reparse_string)
-								);
-							}
-							if( has_pipes > 0 && j != currcmd ){
-								strncat(
-									alias.reparse_string,
-									"| ",
-									MAXINPUTLENGTH-strlen(alias.reparse_string)
-								);
-							}
-						}
-						yy_scan_string(alias.reparse_string);
-						print_flag = -1;
-						return 3;
-					}
-					else{
-						print_flag = 0;
-						printf("right before restart\n");
-
-						yyrestart(stdin);
-						printf("right after restart\n");
-						return OK;
-					}
+			  goodbye 		{ return OK;}
+			| END_OF_FILE { yyrestart(stdin);
+											return OK;
+										}
+			| changeDir 	{ return OK;}
+			| setEnvVar 	{ return OK;}
+			| setAlias  	{ return OK;}
+			| piping    	{ return 1;}
+			| blank	    	{ return OK;}
+			| commands  	{ if( loop_detected > 0 ){
+												yyrestart(stdin);
+												YYACCEPT;
+											}
+											else if( alias_detected > 0 ){
+												alias_detected = 0;
+												int i;
+												int j;
+												for( j = 0; j <= currcmd; ++j){
+													for( i = 0; i <= cmdtab.cmd[j].nargs; ++i ){
+														strncat(
+															alias.reparse_string,
+															cmdtab.cmd[j].atptr->args[i],
+															MAXINPUTLENGTH-strlen(alias.reparse_string)
+														);
+														strncat(
+															alias.reparse_string,
+															" ",
+															MAXINPUTLENGTH-strlen(alias.reparse_string)
+														);
+													}
+													if( has_pipes > 0 && j != currcmd ){
+														strncat(
+															alias.reparse_string,
+															"| ",
+															MAXINPUTLENGTH-strlen(alias.reparse_string)
+														);
+													}
+												}
+												yy_scan_string(alias.reparse_string);
+												print_flag = -1;
+												return 3;
+											}
+											else
+											{
+												print_flag = 0;
+												yyrestart(stdin);
+												return OK;
+											}
 			}
 			;
 
@@ -80,7 +78,7 @@ goodbye:
 
 changeDir:
 			 	CD WORD EOLN {
-					cmdtab.cmd[currcmd].atptr->args[0] = $2; 
+					cmdtab.cmd[currcmd].atptr->args[0] = $2;
 					++cmdcount;
 
 					//chdir($2);
@@ -88,13 +86,13 @@ changeDir:
 			}
 			| CD HOME_PATH WORD EOLN {
 					chdir(getenv("HOME"));
-					cmdtab.cmd[currcmd].atptr->args[0] = $3; 
+					cmdtab.cmd[currcmd].atptr->args[0] = $3;
 					++cmdcount;
 					builtin = CD;
 			}
 			|	CD TWO_PERIODS WORD EOLN {
 					chdir("..");
-					cmdtab.cmd[currcmd].atptr->args[0] = $3; 
+					cmdtab.cmd[currcmd].atptr->args[0] = $3;
 					++cmdcount;
 					builtin= CD;
 			}
@@ -116,7 +114,7 @@ changeDir:
 			}
 			|	CD HOME WORD EOLN {
 					chdir(getenv("HOME"));
-					cmdtab.cmd[currcmd].atptr->args[0] = $3; 
+					cmdtab.cmd[currcmd].atptr->args[0] = $3;
 					++cmdcount;
 					builtin= CD;
 			}
@@ -125,7 +123,7 @@ changeDir:
 					char *new = q+1;
 					new[strlen(new)-1] = '\0';
 					chdir(getenv("HOME"));
-					cmdtab.cmd[currcmd].atptr->args[0] = new; 
+					cmdtab.cmd[currcmd].atptr->args[0] = new;
 					++cmdcount;
 					builtin= CD;
 			}
@@ -183,9 +181,15 @@ setAlias:
 			;
 
 piping:
-				PIPE EOLN {
+				commands PIPE EOLN {
 					cmdtab.cmd[currcmd].cmdname = "pipe";
 					builtin = 0;
+					fprintf(stderr, "Error: Invalid pipe placement.\n");
+			}
+			| PIPE EOLN {
+					cmdtab.cmd[currcmd].cmdname = "pipe";
+					builtin = 0;
+					fprintf(stderr, "Error: Invalid pipe placement.\n");
 			}
 			;
 
