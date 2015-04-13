@@ -13,4 +13,8 @@ alias d dragonfruit
 alias
 unalias c
 alias
+cd dankShell
+ls -l
+wc main.c
+wc ????.c
 bye

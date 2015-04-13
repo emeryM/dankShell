@@ -8,6 +8,8 @@
 #include "y.tab.h"
 
 
+
+
 void shell_init(){
 	int i;
 	//initialize command table and variables
@@ -106,7 +108,7 @@ void fill_file_array(){
 	}
 }
 
-bool match(char *argument, char * filename)//credit for this function http://www.geeksforgeeks.org/wildcard-character-matching/
+bool wildcarding(char *argument, char * filename)//credit for this function http://www.geeksforgeeks.org/wildcard-character-wildcardinging/
 {
     // If we reach at the end of both strings, we are done
     if (*argument == '\0' && *filename == '\0')
@@ -119,13 +121,13 @@ bool match(char *argument, char * filename)//credit for this function http://www
         return false;
  
     // If the first string contains '?', or current characters of both 
-    // strings match
+    // strings wildcarding
     if (*argument == '?' || *argument == *filename)
-        return match(argument+1, filename+1);
+        return wildcarding(argument+1, filename+1);
  
     // If there is *, then there are two possibilities
     if (*argument == '*')
-        return match(argument+1, filename) || match(argument, filename+1);
+        return wildcarding(argument+1, filename) || wildcarding(argument, filename+1);
     return false;
 }
 void scan_args(){
@@ -164,7 +166,7 @@ void scan_args(){
 				if (arg[k] == '?' || arg[k] == '*'){//there is a wildcard, so look at files to replace it
 				    int x=0;
 				    while(x < numFiles){
-				    	if(match(cmdtab.cmd[i].atptr->args[j], currFiles[x])) {
+				    	if(wildcarding(cmdtab.cmd[i].atptr->args[j], currFiles[x])) {
 						    cmdtab.cmd[i].atptr->args[j] = currFiles[x];
 						    //swap old arg with new one
 						}
@@ -474,6 +476,7 @@ void recover_from_errors(){
 
 
 int main( int argc, char* argv[] ) {
+	yyin = stdin;
 	shell_init();
 	while(1){
 		print_prompt();

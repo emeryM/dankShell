@@ -64,6 +64,7 @@ program:
 					else{
 						print_flag = 0;
 						printf("right before restart\n");
+
 						yyrestart(stdin);
 						printf("right after restart\n");
 						return OK;

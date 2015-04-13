@@ -4,6 +4,13 @@
 #include "y.tab.h"
 extern char* yylval;
 
+         #define YY_INPUT(buf,result,max_size) \
+             { \
+             int c = getchar(); \
+             result = (c == EOF) ? YY_NULL : (buf[0] = c, 1); \
+             }
+
+
 
 %}
 
@@ -54,6 +61,8 @@ unalias    return UNALIAS;
 [0-9.]+    		yylval=strdup(yytext); return DECIMAL;
 
 %%
+
+
 
 int yywrap(void){
 		return 1;
